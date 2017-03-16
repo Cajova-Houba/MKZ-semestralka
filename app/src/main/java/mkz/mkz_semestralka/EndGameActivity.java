@@ -5,19 +5,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
-public class LoginActivity extends AppCompatActivity {
+public class EndGameActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_end_game);
     }
 
     /**
-     * Connect button click callback.
+     * Another server button callback.
      */
-    public void onConnectClick(View view) {
-        Intent intent = new Intent(this, GameActivity.class);
+    public void onAnotherServerClick(View view) {
+        Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
     }
 }

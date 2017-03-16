@@ -11,5 +11,8 @@
     <string name="game_player1_name">Player 1</string>
     <string name="game_player2_name">Player 2</string>
     <string name="game_throw_caption">Throw!</string>
-    <string name="game_throw_value" >5</string>
+    <string name="game_throw_value">5</string>
+    <string name="endgame_winner">The game has ended, player 1 wins!</string>
+    <string name="endgame_playagain">Play again </string>
+    <string name="endgame_another_server">Another server</string>
 </resources>
