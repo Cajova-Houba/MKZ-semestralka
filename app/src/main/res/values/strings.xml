@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Senet</string>
+    <string name="login_nickname">Nick</string>
+    <string name="login_nickname_default">valesz</string>
+    <string name="login_address">Address</string>
+    <string name="login_address_default">localhost</string>
+    <string name="login_port">Port</string>
+    <string name="login_port_default">65000</string>
+    <string name="login_connect">Connect</string>
+    <string name="login_error" >Error</string>
+</resources>
