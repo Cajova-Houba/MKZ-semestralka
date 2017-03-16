@@ -7,5 +7,9 @@
     <string name="login_port">Port</string>
     <string name="login_port_default">65000</string>
     <string name="login_connect">Connect</string>
-    <string name="login_error" >Error</string>
+    <string name="login_error">Error</string>
+    <string name="game_player1_name">Player 1</string>
+    <string name="game_player2_name">Player 2</string>
+    <string name="game_throw_caption">Throw!</string>
+    <string name="game_throw_value" >5</string>
 </resources>

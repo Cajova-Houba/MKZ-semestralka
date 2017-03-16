@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="mkz.mkz_semestralka.GameActivity">
+
+    <LinearLayout
+        android:layout_width="576dp"
+        android:layout_height="295dp"
+        android:orientation="horizontal"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="8dp">
+
+        <LinearLayout
+            android:layout_width="113dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:weightSum="1">
+
+            <TextView
+                android:id="@+id/player1Text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/game_player1_name"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/player2Text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/game_player2_name" />
+
+            <TextView
+                android:id="@+id/throwText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/game_throw_value"
+                android:textAlignment="center" />
+
+            <Button
+                android:id="@+id/throwBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.10"
+                android:text="@string/game_throw_caption" />
+
+        </LinearLayout>
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>
