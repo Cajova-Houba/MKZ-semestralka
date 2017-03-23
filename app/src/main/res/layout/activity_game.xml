@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="mkz.mkz_semestralka.GameActivity">
+    tools:context="mkz.mkz_semestralka.ui.GameActivity">
 
     <LinearLayout
         android:layout_width="576dp"

@@ -1,10 +1,16 @@
-package mkz.mkz_semestralka;
+package mkz.mkz_semestralka.ui;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import mkz.mkz_semestralka.R;
+
+/**
+ * Created on 23.03.2017.
+ * @author Zdenek Vales
+ */
 public class EndGameActivity extends AppCompatActivity {
 
     @Override
