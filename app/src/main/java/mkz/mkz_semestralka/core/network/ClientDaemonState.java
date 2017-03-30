@@ -11,7 +11,27 @@ package mkz.mkz_semestralka.core.network;
 public enum ClientDaemonState {
 
     /**
-     * Daemon is idle and just keeps receiving messages and responding to them.
+     * Daemon is idle and is waiting for something to happen.
      */
-    IDLE
+    IDLE,
+
+    /**
+     * Daemon is waiting for messages from server and keeps responding to them.
+     */
+    LISTEN,
+
+    /**
+     * Daemon will send the login message.
+     */
+    LOGIN,
+
+    /**
+     * Daemon will keep waiting for the login response.
+     */
+    LOGIN_RESPONSE_WAIT,
+
+    /**
+     * This will STOP the Daemon thread, use wisely!
+     */
+    STOP
 }

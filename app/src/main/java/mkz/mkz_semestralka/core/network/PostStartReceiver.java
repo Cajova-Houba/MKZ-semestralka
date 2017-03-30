@@ -1,18 +1,19 @@
 package mkz.mkz_semestralka.core.network;
 
-import org.valesz.ups.common.error.EndOfStreamReached;
-import org.valesz.ups.common.error.MaxAttemptsReached;
-import org.valesz.ups.common.error.ReceivingException;
-import org.valesz.ups.common.message.Message;
-import org.valesz.ups.common.message.received.AbstractReceivedMessage;
-import org.valesz.ups.common.message.received.ExpectedMessageComparator;
-import org.valesz.ups.common.message.received.ReceivedMessageTypeResolver;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+
+import mkz.mkz_semestralka.core.error.EndOfStreamReached;
+import mkz.mkz_semestralka.core.error.MaxAttemptsReached;
+import mkz.mkz_semestralka.core.error.ReceivingException;
+import mkz.mkz_semestralka.core.message.MessageBuilder;
+import mkz.mkz_semestralka.core.message.received.AbstractReceivedMessage;
+import mkz.mkz_semestralka.core.message.received.ExpectedMessageComparator;
+import mkz.mkz_semestralka.core.message.received.ReceivedMessageTypeResolver;
 
 /**
  * This task will handle all incoming messages in the post-start game state.
@@ -80,7 +81,7 @@ public class PostStartReceiver extends AbstractReceiver {
      */
     private void checkAttempts(int attempts) throws MaxAttemptsReached {
         if(attempts >= maxAttempts && maxAttempts != TcpClient.INF_ATTEMPTS) {
-            logger.error("Maximum number of attempts reached.");
+            logger.e("Maximum number of attempts reached.");
             throw new MaxAttemptsReached();
         }
     }
@@ -98,7 +99,7 @@ public class PostStartReceiver extends AbstractReceiver {
         int timeoutCntr = 0;
         int attemptCntr = 0;
 
-        while (!expectedMessageComparator.isExpected(receivedMessage) && !getShutdown()) {
+        while (!expectedMessageComparator.isExpected(receivedMessage)) {
 
             // check before and after waiting for message
             if(Thread.currentThread().isInterrupted()) {
@@ -117,18 +118,18 @@ public class PostStartReceiver extends AbstractReceiver {
 //                logger.warn("Socket timed out, increasing the timeout counter.");
                 timeoutCntr += MAX_WAITING_TIMEOUT;
                 if (timeoutCntr >= maxTimeoutMs && maxTimeoutMs != TcpClient.NO_TIMEOUT) {
-                    logger.error("Max timeout reached. Sending is alive message");
-                    outToServer.write(Message.createIsAliveMessage().toBytes());
+                    logger.e("Max timeout reached. Sending is alive message");
+                    outToServer.write(MessageBuilder.createIsAliveMessage().toBytes());
 
                     // receive ok message
                     socket.setSoTimeout(TcpClient.MAX_ALIVE_TIMEOUT);
                     okReceived = receiveOk(inFromServer);
                     if (okReceived == null) {
-                        logger.error("Server not responding.");
+                        logger.e("Server not responding.");
                         throw new SocketTimeoutException();
                     } else {
                         socket.setSoTimeout(TcpClient.MAX_WAITING_TIMEOUT);
-                        logger.debug("Server lives, incrementing attempt counter.");
+                        logger.d("Server lives, incrementing attempt counter.");
                         timeoutCntr = 0;
                         attemptCntr++;
                         // check attempts
@@ -138,11 +139,11 @@ public class PostStartReceiver extends AbstractReceiver {
                 continue;
 
             } catch (EndOfStreamReached ex) {
-                logger.error("End of stream reached.");
+                logger.e("End of stream reached.");
                 throw ex;
             } catch (ReceivingException ex) {
                 // error occured => increase the attemptCntr
-                logger.warn("Error occurred while receiving the message: "+ex.error.code.name()+". Increasing the attempt counter.");
+                logger.w("Error occurred while receiving the message: "+ex.error.code.name()+". Increasing the attempt counter.");
                 attemptCntr++;
                 // check attempts
                 checkAttempts(attemptCntr);
@@ -151,22 +152,22 @@ public class PostStartReceiver extends AbstractReceiver {
 
             // handle expected message
             if (expectedMessageComparator.isExpected(receivedMessage)) {
-                logger.debug("Expected message received.");
+                logger.d("Expected message received.");
 
                 // handle alive message
             } else if(ReceivedMessageTypeResolver.isAliveMessage(receivedMessage) != null) {
                 // send ok
-                logger.debug("Is alive message received, sending ok.");
-                outToServer.write(Message.createOKMessage().toBytes());
+                logger.d("Is alive message received, sending ok.");
+                outToServer.write(MessageBuilder.createOKMessage().toBytes());
 
                 // handle end game message
             } else if (ReceivedMessageTypeResolver.isEndGame(receivedMessage) != null) {
-                logger.debug("End game received.");
+                logger.d("End game received.");
                 break;
 
                 // handle unexpected message
             } else {
-                logger.debug("Unexpected message received, incrementing the attempt counter.");
+                logger.d("Unexpected message received, incrementing the attempt counter.");
                 attemptCntr++;
                 checkAttempts(attemptCntr);
             }
@@ -175,12 +176,12 @@ public class PostStartReceiver extends AbstractReceiver {
         return receivedMessage;
     }
 
-    @Override
-    protected AbstractReceivedMessage call() throws Exception {
-        socket.setSoTimeout(MAX_WAITING_TIMEOUT);
-        DataInputStream inFromServer = new DataInputStream(socket.getInputStream());
-        DataOutputStream outToServer = new DataOutputStream(socket.getOutputStream());
-
-        return waitForMessage(inFromServer, outToServer);
-    }
+//    @Override
+//    protected AbstractReceivedMessage call() throws Exception {
+//        socket.setSoTimeout(MAX_WAITING_TIMEOUT);
+//        DataInputStream inFromServer = new DataInputStream(socket.getInputStream());
+//        DataOutputStream outToServer = new DataOutputStream(socket.getOutputStream());
+//
+//        return waitForMessage(inFromServer, outToServer);
+//    }
 }
