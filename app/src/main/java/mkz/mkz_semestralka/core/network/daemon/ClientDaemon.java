@@ -1,9 +1,10 @@
-package mkz.mkz_semestralka.core.network;
+package mkz.mkz_semestralka.core.network.daemon;
 
 
 import android.os.Handler;
 
 import mkz.mkz_semestralka.core.message.received.AbstractReceivedMessage;
+import mkz.mkz_semestralka.core.network.LoginData;
 
 /**
  * A daemon thread which will fetch communication with the server.
@@ -13,32 +14,9 @@ import mkz.mkz_semestralka.core.message.received.AbstractReceivedMessage;
  * @author Zdenek Vales
  */
 
-public class ClientDaemon extends Thread implements Daemon{
-
-    public static ClientDaemon getInstance() {
-        if(instance == null) {
-            instance = new ClientDaemon();
-        }
-
-        return instance;
-    }
-
-    /**
-     * Nulls the current instance of the thread.
-     * Should be called ONLY after the thread has finished.
-     */
-    public static void nullInstance() {
-        instance = null;
-    }
-
-    private static ClientDaemon instance;
+public class ClientDaemon extends Thread implements Daemon {
 
     private ClientDaemonState state;
-
-    /**
-     * Handler for main thread callbacks.
-     */
-    private Handler mainHandler;
 
     /**
      * Response to the last manually message sent to server. Responses to ALIVE message are
@@ -57,7 +35,7 @@ public class ClientDaemon extends Thread implements Daemon{
      */
     private Object data;
 
-    private ClientDaemon() {
+    public ClientDaemon() {
         state = ClientDaemonState.IDLE;
     }
 
@@ -67,13 +45,6 @@ public class ClientDaemon extends Thread implements Daemon{
 
         // call the state machine which will do all the dirty work
         stateMachine();
-    }
-
-    /**
-     * Sets the handler for the main thread.
-     */
-    public synchronized void setMainHandler(Handler mainHandler) {
-        this.mainHandler = mainHandler;
     }
 
     @Override
@@ -129,7 +100,7 @@ public class ClientDaemon extends Thread implements Daemon{
         // wait for response
 
         // call the callback
-        mainHandler.post(callback);
+        callback.run();
 
         // switch to idle state
         state = ClientDaemonState.IDLE;

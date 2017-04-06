@@ -1,4 +1,4 @@
-package mkz.mkz_semestralka.core.network;
+package mkz.mkz_semestralka.core.network.daemon;
 
 /**
  * Possible states of ClientDaemon.

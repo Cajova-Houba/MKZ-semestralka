@@ -1,6 +1,7 @@
-package mkz.mkz_semestralka.core.network;
+package mkz.mkz_semestralka.core.network.daemon;
 
 import mkz.mkz_semestralka.core.message.received.AbstractReceivedMessage;
+import mkz.mkz_semestralka.core.network.LoginData;
 
 /**
  * This interface specifies operations which can be used to control the daemon thread.
