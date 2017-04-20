@@ -1,8 +1,7 @@
 package mkz.mkz_semestralka.core.network.daemon;
 
 
-import android.os.Handler;
-
+import mkz.mkz_semestralka.core.Logger;
 import mkz.mkz_semestralka.core.message.received.AbstractReceivedMessage;
 import mkz.mkz_semestralka.core.network.LoginData;
 
@@ -15,6 +14,8 @@ import mkz.mkz_semestralka.core.network.LoginData;
  */
 
 public class ClientDaemon extends Thread implements Daemon {
+
+    private final static Logger logger = Logger.getLogger(ClientDaemon.class);
 
     private ClientDaemonState state;
 
@@ -41,7 +42,7 @@ public class ClientDaemon extends Thread implements Daemon {
 
     @Override
     public void run() {
-        super.run();
+        logger.d("Starting the client daemon.");
 
         // call the state machine which will do all the dirty work
         stateMachine();
@@ -112,6 +113,13 @@ public class ClientDaemon extends Thread implements Daemon {
     // todo: handle login state
     private void loginState() {
         // send login
+        logger.d("Logging to "+data.toString());
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        logger.d("Logged.");
 
         // switch the state
         state = ClientDaemonState.LOGIN_RESPONSE_WAIT;
