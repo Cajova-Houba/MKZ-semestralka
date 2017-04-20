@@ -3,7 +3,6 @@ package mkz.mkz_semestralka.core.network.daemon;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
-import android.os.Handler;
 import android.os.IBinder;
 
 import mkz.mkz_semestralka.core.Logger;
@@ -63,11 +62,13 @@ public class ClientDaemonService extends Service implements DaemonService {
     }
 
     @Override
-    public void login(LoginData loginData, final Handler mainHandler) {
+    public void login(LoginData loginData) {;
         clientDaemon.login(loginData, new Runnable() {
             @Override
             public void run() {
-                mainHandler.sendEmptyMessage(1);
+                Intent i = new Intent(DaemonActionNames.DAEMON_FILTER);
+                i.putExtra(DaemonActionNames.CLIENT_ACTION_NAME, DaemonActionNames.LOGIN_RESPONSE);
+                sendBroadcast(i);
             }
         });
     }

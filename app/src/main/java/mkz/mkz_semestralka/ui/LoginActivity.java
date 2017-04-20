@@ -1,8 +1,10 @@
 package mkz.mkz_semestralka.ui;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,6 +17,7 @@ import mkz.mkz_semestralka.R;
 import mkz.mkz_semestralka.core.Logger;
 import mkz.mkz_semestralka.core.network.LoginData;
 import mkz.mkz_semestralka.core.network.daemon.ClientDaemonService;
+import mkz.mkz_semestralka.core.network.daemon.DaemonActionNames;
 
 /**
  * Created on 23.03.2017.
@@ -48,6 +51,33 @@ public class LoginActivity extends AppCompatActivity {
         }
     };
 
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            logger.d("Broadcast received! "+intent.getAction());
+            if(intent.getStringExtra(DaemonActionNames.CLIENT_ACTION_NAME).equals(DaemonActionNames.LOGIN_RESPONSE)) {
+                logger.d("Login response received from daemon!");
+                Intent i = new Intent(LoginActivity.this, GameActivity.class);
+                startActivity(i);
+            } else {
+                logger.w("Unsupported daemon action: "+intent.getStringExtra(DaemonActionNames.CLIENT_ACTION_NAME));
+            }
+        }
+    };
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(broadcastReceiver, new IntentFilter(DaemonActionNames.DAEMON_FILTER));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(broadcastReceiver);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,10 +97,8 @@ public class LoginActivity extends AppCompatActivity {
      * Connect button click callback.
      */
     public void onConnectClick(View view) {
-//        Intent intent = new Intent(this, GameActivity.class);
         Handler handler = new Handler(Looper.getMainLooper());
-        clientDaemonService.login(new LoginData("nick","localhost",65000),handler);
-        //startActivity(intent);
+        clientDaemonService.login(new LoginData("nick","localhost",65000));
     }
 }
 

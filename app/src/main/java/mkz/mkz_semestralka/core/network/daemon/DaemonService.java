@@ -1,7 +1,5 @@
 package mkz.mkz_semestralka.core.network.daemon;
 
-import android.os.Handler;
-
 import mkz.mkz_semestralka.core.network.LoginData;
 
 /**
@@ -13,13 +11,12 @@ public interface DaemonService {
 
     /**
      * Daemon will send the login message to the server and then waits for the response.
-     * After nick response is received, message will be sent to main thread via mainHandler. Either OK or ERR messages are expected,
-     * so one of those will be stored in responseToLastAction variable.
+     * After nick response is received, message will be broadcast with action name DaemonActionNames.DAEMON_FILTER.
+     * Either OK or ERR messages are expected, so one of those will be stored in responseToLastAction variable.
      *
      * @param loginData Login data.
-     * @param mainHandler Handler of the main thread.
      */
-    void login(LoginData loginData, Handler mainHandler);
+    void login(LoginData loginData);
 
     /**
      * Sends an exit message to the server. No callback is probably needed for this.
