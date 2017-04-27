@@ -36,6 +36,16 @@ public enum ClientDaemonState {
     WAIT_FOR_NEW_GAME,
 
     /**
+     * Daemon will send the end turn message to server.
+     */
+    END_TURN,
+
+    /**
+     * Daemon is waiting for new turn message from server.
+     */
+    WAIT_FOR_NEW_TURN,
+
+    /**
      * This will STOP the Daemon thread, use wisely!
      */
     STOP

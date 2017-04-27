@@ -78,6 +78,11 @@ public class ClientDaemon extends Thread implements Daemon {
         this.data = null;
     }
 
+    @Override
+    public synchronized void endTurn() {
+        state = ClientDaemonState.END_TURN;
+    }
+
     /**
      * The core of this mighty Daemon, the state machine which will fetch all logic.
      *
@@ -100,10 +105,31 @@ public class ClientDaemon extends Thread implements Daemon {
                 case WAIT_FOR_NEW_GAME:
                     waitForNewGameState();
                     break;
+                case END_TURN:
+                    break;
+                case WAIT_FOR_NEW_TURN:
+                    break;
             }
         }
     }
 
+
+    /**
+     * Daemon will send end turn message to the server.
+     */
+    // todo: end turn
+    private void endTurnState() {
+
+        state = ClientDaemonState.WAIT_FOR_NEW_TURN;
+    }
+
+    /**
+     * Daemon is waiting for a new turn message from server.
+     */
+    // todo: wait for new turn
+    private void waitForNewTurnState() {
+        state = ClientDaemonState.IDLE;
+    }
 
     /**
      * Daemon is waiting for new game message.

@@ -144,6 +144,11 @@ public class ClientDaemonService extends Service implements DaemonService {
     }
 
     @Override
+    public void endTurn() {
+
+    }
+
+    @Override
     public void exit() {
 
     }

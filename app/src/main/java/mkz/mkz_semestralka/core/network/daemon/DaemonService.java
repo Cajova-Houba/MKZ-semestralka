@@ -29,6 +29,11 @@ public interface DaemonService {
     void waitForStartGame();
 
     /**
+     * Sends the end turn message and the daemon will wait for message to start next turn.
+     */
+    void endTurn();
+
+    /**
      * Sends an exit message to the server. No callback is probably needed for this.
      */
     void exit();

@@ -53,4 +53,9 @@ public interface Daemon {
      */
     void stopDaemon();
 
+    /**
+     * Sends the end turn message and the daemon will wait for message to start next turn.
+     */
+    void endTurn();
+
 }
