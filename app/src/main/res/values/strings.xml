@@ -15,4 +15,5 @@
     <string name="endgame_winner">The game has ended, player 1 wins!</string>
     <string name="endgame_playagain">Play again </string>
     <string name="endgame_another_server">Another server</string>
+    <string name="game_end_turn_caption">End turn</string>
 </resources>

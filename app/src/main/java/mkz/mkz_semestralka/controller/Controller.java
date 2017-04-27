@@ -99,6 +99,36 @@ public class Controller {
         }
     }
 
+    /**
+     * Throws sticks and returns the value.
+     */
+    public int throwSticks() {
+        int thrown;
+        if(Game.getInstance().alreadyThrown() && !Game.getInstance().canThrowAgain()) {
+            thrown = Game.getInstance().throwSticks();
+        } else {
+            thrown = Game.getInstance().throwSticks();
+            logger.d("Thrown: "+thrown+"\n");
+            gameActivity.setThrowText(Integer.toString(thrown));
+
+            if(Game.getInstance().canThrowAgain()) {
+                gameActivity.displayToast("Hozeno: "+thrown+". Házej znovu.");
+            } else {
+                gameActivity.displayToast("Hozeno: "+thrown+".");
+            }
+        }
+
+        if(Game.getInstance().canThrowAgain()) {
+            gameActivity.enableThrowButton(true);
+            gameActivity.enableEndTurnButton(false);
+        } else {
+            gameActivity.enableThrowButton(false);
+            gameActivity.enableEndTurnButton(true);
+        }
+
+        return thrown;
+    }
+
     public String getTmpPlayerName() {
         return tmpPlayerName;
     }

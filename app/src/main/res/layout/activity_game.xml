@@ -32,6 +32,12 @@
                 android:layout_height="wrap_content"
                 android:text="@string/game_player2_name" />
 
+            <TextClock
+                android:id="@+id/turnTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center" />
+
             <TextView
                 android:id="@+id/throwText"
                 android:layout_width="match_parent"
@@ -43,8 +49,19 @@
                 android:id="@+id/throwBtn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.10"
+                android:layout_gravity="end"
+                android:layout_weight="0.32"
+                android:onClick="onThrowClick"
                 android:text="@string/game_throw_caption" />
+
+            <Button
+                android:id="@+id/endTurnBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:text="@string/game_end_turn_caption"
+                android:visibility="visible"
+                android:layout_weight="0.39" />
 
         </LinearLayout>
 

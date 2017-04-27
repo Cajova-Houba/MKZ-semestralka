@@ -7,12 +7,13 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import mkz.mkz_semestralka.R;
 import mkz.mkz_semestralka.controller.Controller;
 import mkz.mkz_semestralka.core.Logger;
-import mkz.mkz_semestralka.core.error.ErrorCode;
 import mkz.mkz_semestralka.core.game.Game;
 import mkz.mkz_semestralka.core.network.daemon.ClientDaemonService;
 import mkz.mkz_semestralka.core.network.daemon.DaemonActionNames;
@@ -27,6 +28,7 @@ public class GameActivity extends AppCompatActivity {
 
     public static final String DEF_P1_NICK = "-";
     public static final String DEF_P2_NICK = "-";
+    public static final String DEF_THROW = "-";
 
     private Controller controller;
 
@@ -42,12 +44,7 @@ public class GameActivity extends AppCompatActivity {
             logger.d("Broadcast received! "+intent.getAction());
             if(intent.getStringExtra(DaemonActionNames.CLIENT_ACTION_NAME).equals(DaemonActionNames.START_GAME_RESPONSE)) {
                 logger.d("Start game response received from daemon!");
-                ErrorCode errorCode = (ErrorCode) intent.getSerializableExtra(DaemonActionNames.ERR_CODE);
-                if(errorCode == ErrorCode.NO_ERROR) {
-                    // start game
-                } else {
-
-                }
+                controller.handleStartNewGame(intent);
             } else {
                 logger.w("Unsupported daemon action: "+intent.getStringExtra(DaemonActionNames.CLIENT_ACTION_NAME));
             }
@@ -99,10 +96,30 @@ public class GameActivity extends AppCompatActivity {
         ((TextView)findViewById(R.id.player2Text)).setText(p2Nick);
     }
 
+    public void setThrowText(String throwText) {
+        ((TextView)findViewById(R.id.throwText)).setText(throwText);
+    }
+
+    public void enableThrowButton(boolean enable) {
+        findViewById(R.id.throwBtn).setEnabled(enable);
+    }
+
+    public void enableEndTurnButton(boolean enable) {
+        findViewById(R.id.endTurnBtn).setEnabled(enable);
+    }
+
+    public void displayToast(String message) {
+        Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
+        toast.show();
+    }
 
     public void startGame() {
         // todo: display stuff, timer...
         displayP1Nick(Game.getInstance().getFirstPlayer().getNick());
         displayP2Nick(Game.getInstance().getSecondPlayer().getNick());
+    }
+
+    public void onThrowClick(View view) {
+        controller.throwSticks();
     }
 }
