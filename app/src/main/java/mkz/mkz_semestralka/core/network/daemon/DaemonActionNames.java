@@ -46,5 +46,10 @@ public class DaemonActionNames {
      */
     public static final String LOGIN_RESPONSE = "LOGIN_RESPONSE";
 
+    /**
+     * Daemon is broadcasting start game response.
+     */
+    public static final String START_GAME_RESPONSE = "START_GAME_RESPONSE";
+
 
 }

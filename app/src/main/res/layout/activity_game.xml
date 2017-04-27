@@ -47,5 +47,12 @@
                 android:text="@string/game_throw_caption" />
 
         </LinearLayout>
+
+        <view
+            class="mkz.mkz_semestralka.ui.components.BoardView"
+            id="@+id/boardView"
+            layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

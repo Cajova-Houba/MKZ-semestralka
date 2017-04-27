@@ -1,5 +1,7 @@
 package mkz.mkz_semestralka.core.network;
 
+import java.io.Serializable;
+
 /**
  * A simple class for login data - nick, address and port.
  *
@@ -7,7 +9,7 @@ package mkz.mkz_semestralka.core.network;
  * @author Zdenek Vales
  */
 
-public class LoginData {
+public class LoginData implements Serializable{
     private final String nick;
     private final String address;
     private final int port;

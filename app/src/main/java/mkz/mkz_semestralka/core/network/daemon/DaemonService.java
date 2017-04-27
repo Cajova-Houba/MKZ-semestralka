@@ -19,6 +19,16 @@ public interface DaemonService {
     void login(LoginData loginData);
 
     /**
+     * Daemon will keep receiving message from server and when the start turn message is received,
+     * message will be broadcast.
+     *
+     * DaemonActionNames.START_GAME_RESPONSE will be broadcast. The CONTENT field will contain names of two players separated by ';'.
+     * If error occurs, CONTENT will contain CONTENT_ERR.
+     *
+     */
+    void waitForStartGame();
+
+    /**
      * Sends an exit message to the server. No callback is probably needed for this.
      */
     void exit();

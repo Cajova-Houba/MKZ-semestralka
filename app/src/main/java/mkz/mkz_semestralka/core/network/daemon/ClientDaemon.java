@@ -1,13 +1,10 @@
 package mkz.mkz_semestralka.core.network.daemon;
 
 
-import java.util.Random;
-
 import mkz.mkz_semestralka.core.Logger;
-import mkz.mkz_semestralka.core.error.ErrorCode;
 import mkz.mkz_semestralka.core.message.received.AbstractReceivedMessage;
-import mkz.mkz_semestralka.core.message.received.ErrorReceivedMessage;
 import mkz.mkz_semestralka.core.message.received.OkReceivedMessage;
+import mkz.mkz_semestralka.core.message.received.StartGameReceivedMessage;
 import mkz.mkz_semestralka.core.network.LoginData;
 
 /**
@@ -74,6 +71,13 @@ public class ClientDaemon extends Thread implements Daemon {
         state = ClientDaemonState.STOP;
     }
 
+    @Override
+    public synchronized void waitForStartGame(Runnable callback) {
+        state = ClientDaemonState.WAIT_FOR_NEW_GAME;
+        this.callback = callback;
+        this.data = null;
+    }
+
     /**
      * The core of this mighty Daemon, the state machine which will fetch all logic.
      *
@@ -93,10 +97,27 @@ public class ClientDaemon extends Thread implements Daemon {
                 case LOGIN_RESPONSE_WAIT:
                     loginResponseWaitState();
                     break;
+                case WAIT_FOR_NEW_GAME:
+                    waitForNewGameState();
+                    break;
             }
         }
     }
 
+
+    /**
+     * Daemon is waiting for new game message.
+     */
+    // todo: wait for new game
+    private void waitForNewGameState() {
+        logger.d("Waiting for new game.");
+
+        // receive messages
+        responseToLastAction = new StartGameReceivedMessage("valesz", "p-2");
+        callback.run();
+
+        state = ClientDaemonState.IDLE;
+    }
 
     /**
      * Waits for the response and then calls the callback using main handler.
@@ -127,13 +148,14 @@ public class ClientDaemon extends Thread implements Daemon {
         logger.d("Logged.");
 
         // set the received message
-        Random r = new Random();
-        int i = r.nextInt(8)+43;
-        if(i > 46) {
-            responseToLastAction = new OkReceivedMessage();
-        } else {
-            responseToLastAction = new ErrorReceivedMessage(ErrorCode.getCodeByInt(i));
-        }
+        responseToLastAction = new OkReceivedMessage();
+//        Random r = new Random();
+//        int i = r.nextInt(8)+43;
+//        if(i > 46) {
+//            responseToLastAction = new OkReceivedMessage();
+//        } else {
+//            responseToLastAction = new ErrorReceivedMessage(ErrorCode.getCodeByInt(i));
+//        }
 
         // switch the state
         state = ClientDaemonState.LOGIN_RESPONSE_WAIT;

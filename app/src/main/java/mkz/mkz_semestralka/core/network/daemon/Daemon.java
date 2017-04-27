@@ -36,6 +36,14 @@ public interface Daemon {
     void login(LoginData loginData, Runnable callback);
 
     /**
+     * Switch the daemon state to WAIT_FOR_START_GAME. After the message is received, callback is called.
+     * Either error message or start game message is stored in responseToLastAction.
+     *
+     * @param callback A piece of code to be executed by main thread after the error or start game message is received.
+     */
+    void waitForStartGame(Runnable callback);
+
+    /**
      * Sends an exit message to the server. No callback is probably needed for this.
      */
     void exit();

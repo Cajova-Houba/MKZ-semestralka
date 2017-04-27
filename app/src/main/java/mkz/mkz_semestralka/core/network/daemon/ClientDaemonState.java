@@ -31,6 +31,11 @@ public enum ClientDaemonState {
     LOGIN_RESPONSE_WAIT,
 
     /**
+     * Daemon is waiting for new game message.
+     */
+    WAIT_FOR_NEW_GAME,
+
+    /**
      * This will STOP the Daemon thread, use wisely!
      */
     STOP
