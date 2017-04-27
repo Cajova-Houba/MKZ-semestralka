@@ -1,5 +1,7 @@
 package mkz.mkz_semestralka.core.error;
 
+import java.io.Serializable;
+
 /**
  * Error codes.
  *
@@ -7,7 +9,7 @@ package mkz.mkz_semestralka.core.error;
  * Created on 23.03.2017.
  * @author Zdenek Vales
  */
-public enum ErrorCode {
+public enum ErrorCode implements Serializable{
 
     NO_ERROR(-1),
     UNRECOGNIZED_ERROR(51),

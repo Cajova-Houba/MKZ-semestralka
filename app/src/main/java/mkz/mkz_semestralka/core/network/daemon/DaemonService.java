@@ -12,7 +12,7 @@ public interface DaemonService {
     /**
      * Daemon will send the login message to the server and then waits for the response.
      * After nick response is received, message will be broadcast with action name DaemonActionNames.DAEMON_FILTER.
-     * Either OK or ERR messages are expected, so one of those will be stored in responseToLastAction variable.
+     * If the login is OK, DaemonActionNames.CONTENT field of intent will contain "OK", otherwise error code will be stored in this field.
      *
      * @param loginData Login data.
      */

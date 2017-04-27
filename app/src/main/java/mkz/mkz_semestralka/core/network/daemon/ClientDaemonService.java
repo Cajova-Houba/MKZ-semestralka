@@ -6,6 +6,10 @@ import android.os.Binder;
 import android.os.IBinder;
 
 import mkz.mkz_semestralka.core.Logger;
+import mkz.mkz_semestralka.core.error.ErrorCode;
+import mkz.mkz_semestralka.core.message.received.AbstractReceivedMessage;
+import mkz.mkz_semestralka.core.message.received.ErrorReceivedMessage;
+import mkz.mkz_semestralka.core.message.received.ReceivedMessageTypeResolver;
 import mkz.mkz_semestralka.core.network.LoginData;
 
 /**
@@ -66,8 +70,24 @@ public class ClientDaemonService extends Service implements DaemonService {
         clientDaemon.login(loginData, new Runnable() {
             @Override
             public void run() {
+                // todo: move this to controller?
+                AbstractReceivedMessage msg = clientDaemon.getResponseToLastAction();
+                ErrorReceivedMessage err = ReceivedMessageTypeResolver.isError(msg);
+
                 Intent i = new Intent(DaemonActionNames.DAEMON_FILTER);
                 i.putExtra(DaemonActionNames.CLIENT_ACTION_NAME, DaemonActionNames.LOGIN_RESPONSE);
+
+                // add response from server to broadcast message
+                if (msg != null) {
+                    if (ReceivedMessageTypeResolver.isOk(msg) != null) {
+                        i.putExtra(DaemonActionNames.CONTENT, DaemonActionNames.CONTENT_OK);
+                        i.putExtra(DaemonActionNames.ERR_CODE, ErrorCode.NO_ERROR);
+                    } else if (err != null) {
+                        i.putExtra(DaemonActionNames.CONTENT, DaemonActionNames.CONTENT_ERR);
+                        i.putExtra(DaemonActionNames.ERR_CODE, err.getContent().code);
+                    }
+                }
+
                 sendBroadcast(i);
             }
         });

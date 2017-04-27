@@ -7,14 +7,15 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.TextView;
 
 import mkz.mkz_semestralka.R;
 import mkz.mkz_semestralka.core.Logger;
+import mkz.mkz_semestralka.core.error.ErrorCode;
+import mkz.mkz_semestralka.core.error.ErrorMessages;
 import mkz.mkz_semestralka.core.network.LoginData;
 import mkz.mkz_semestralka.core.network.daemon.ClientDaemonService;
 import mkz.mkz_semestralka.core.network.daemon.DaemonActionNames;
@@ -57,8 +58,17 @@ public class LoginActivity extends AppCompatActivity {
             logger.d("Broadcast received! "+intent.getAction());
             if(intent.getStringExtra(DaemonActionNames.CLIENT_ACTION_NAME).equals(DaemonActionNames.LOGIN_RESPONSE)) {
                 logger.d("Login response received from daemon!");
-                Intent i = new Intent(LoginActivity.this, GameActivity.class);
-                startActivity(i);
+                String content = intent.getStringExtra(DaemonActionNames.CONTENT);
+                if(content.equalsIgnoreCase(DaemonActionNames.CONTENT_OK)) {
+                    // login ok
+                    Intent i = new Intent(LoginActivity.this, GameActivity.class);
+                    startActivity(i);
+                } else {
+                    // display error
+                    ErrorCode errCode = (ErrorCode) intent.getSerializableExtra(DaemonActionNames.ERR_CODE);
+                    TextView errorView = (TextView)findViewById(R.id.errorText);
+                    errorView.setText(ErrorMessages.getErrorForCode(errCode));
+                }
             } else {
                 logger.w("Unsupported daemon action: "+intent.getStringExtra(DaemonActionNames.CLIENT_ACTION_NAME));
             }
@@ -97,7 +107,6 @@ public class LoginActivity extends AppCompatActivity {
      * Connect button click callback.
      */
     public void onConnectClick(View view) {
-        Handler handler = new Handler(Looper.getMainLooper());
         clientDaemonService.login(new LoginData("nick","localhost",65000));
     }
 }

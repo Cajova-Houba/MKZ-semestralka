@@ -21,8 +21,30 @@ public class DaemonActionNames {
     public static final String CLIENT_ACTION_NAME = "CLIENT_DAEMON_ACTION";
 
     /**
+     * Name of the field which will contain content of the response.
+     */
+    public static final String CONTENT = "DAEMON_RESPONSE_CONTENT";
+
+    /**
+     * Value of the content field if everything is ok.
+     */
+    public static final String CONTENT_OK = "OK";
+
+    /**
+     * Value of the content field if error occurs.
+     */
+    public static final String CONTENT_ERR = "ERR";
+
+    /**
+     * Name of the field which will contain error code, if error occurs.
+     * The filed will contain an ErrorCode object, not a string.
+     */
+    public static final String ERR_CODE = "ERR_CODE";
+
+    /**
      * Daemon is broadcasting login response.
      */
     public static final String LOGIN_RESPONSE = "LOGIN_RESPONSE";
+
 
 }

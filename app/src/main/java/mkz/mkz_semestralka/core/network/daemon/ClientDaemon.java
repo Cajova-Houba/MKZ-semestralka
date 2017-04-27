@@ -1,8 +1,13 @@
 package mkz.mkz_semestralka.core.network.daemon;
 
 
+import java.util.Random;
+
 import mkz.mkz_semestralka.core.Logger;
+import mkz.mkz_semestralka.core.error.ErrorCode;
 import mkz.mkz_semestralka.core.message.received.AbstractReceivedMessage;
+import mkz.mkz_semestralka.core.message.received.ErrorReceivedMessage;
+import mkz.mkz_semestralka.core.message.received.OkReceivedMessage;
 import mkz.mkz_semestralka.core.network.LoginData;
 
 /**
@@ -120,6 +125,15 @@ public class ClientDaemon extends Thread implements Daemon {
             e.printStackTrace();
         }
         logger.d("Logged.");
+
+        // set the received message
+        Random r = new Random();
+        int i = r.nextInt(8)+43;
+        if(i > 46) {
+            responseToLastAction = new OkReceivedMessage();
+        } else {
+            responseToLastAction = new ErrorReceivedMessage(ErrorCode.getCodeByInt(i));
+        }
 
         // switch the state
         state = ClientDaemonState.LOGIN_RESPONSE_WAIT;
