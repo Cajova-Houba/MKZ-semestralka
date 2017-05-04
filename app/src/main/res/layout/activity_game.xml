@@ -66,6 +66,7 @@
         </LinearLayout>
 
         <view
+            android:id="@+id/boardView"
             class="mkz.mkz_semestralka.ui.components.BoardView"
             id="@+id/boardView"
             layout_weight="1"

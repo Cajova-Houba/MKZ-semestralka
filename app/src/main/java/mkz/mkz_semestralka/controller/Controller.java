@@ -94,6 +94,11 @@ public class Controller {
             String[] players = intent.getStringExtra(DaemonActionNames.CONTENT).split(";");
             Game.getInstance().startGame(players[0],players[1]);
             gameActivity.startGame();
+            gameActivity.updateStones(
+                    Game.getInstance().getFirstPlayer().getStones(),
+                    Game.getInstance().getSecondPlayer().getStones());
+
+            // todo: whose turn is now?
         } else {
             // handle error
         }

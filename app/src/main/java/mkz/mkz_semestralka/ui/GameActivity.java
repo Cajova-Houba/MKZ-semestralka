@@ -17,6 +17,7 @@ import mkz.mkz_semestralka.core.Logger;
 import mkz.mkz_semestralka.core.game.Game;
 import mkz.mkz_semestralka.core.network.daemon.ClientDaemonService;
 import mkz.mkz_semestralka.core.network.daemon.DaemonActionNames;
+import mkz.mkz_semestralka.ui.components.BoardView;
 
 /**
  * Created on 23.03.2017.
@@ -117,6 +118,13 @@ public class GameActivity extends AppCompatActivity {
         // todo: display stuff, timer...
         displayP1Nick(Game.getInstance().getFirstPlayer().getNick());
         displayP2Nick(Game.getInstance().getSecondPlayer().getNick());
+    }
+
+    public void updateStones(int[] firsPlayerPositions, int[] seconPlayerPositions) {
+        BoardView boardView = (BoardView) findViewById(R.id.boardView);
+        boardView.setFirstPlayerStonePositions(firsPlayerPositions);
+        boardView.setSecondPlayerStonePositions(seconPlayerPositions);
+        boardView.setCanDrawStones(true);
     }
 
     public void onThrowClick(View view) {
