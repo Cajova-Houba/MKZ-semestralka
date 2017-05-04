@@ -261,6 +261,56 @@ public class Controller {
         return thrown;
     }
 
+    /**
+     * Tries to move the stone of the current player on the fromField to toFiled.
+     * If the stone is moved, true is returned and board view is updated.
+     *
+     * @param fromField
+     * @param toField
+     * @return
+     */
+    public boolean move(int fromField, int toField) {
+        // check if the sticks were already thrown
+        if(!Game.getInstance().alreadyThrown()) {
+            logger.w("Sticks not thrown yet!");
+            gameActivity.displayToast("Nejdříve hoď dřívky!");
+            return false;
+        }
+
+        // check that the player hasn't moved in this turn yet
+        if(Game.getInstance().isAlreadyMoved()) {
+            logger.w("Player already moved his stone!");
+            gameActivity.displayToast("V tomto kole už jsi hrál!");
+            return false;
+        }
+
+        // check that the move will be equal to the thrown value
+        if(!Game.getInstance().isMoveLengthOk(fromField, toField)) {
+            logger.w("Wrong move!");
+            gameActivity.displayToast("Můžeš táhnout jen o délku hodu!");
+            return false;
+        }
+
+        // move stones and update board
+        if(Game.getInstance().moveStone(fromField, toField)) {
+            gameActivity.updateStones(Game.getInstance().getFirstPlayer().getStones(),
+                    Game.getInstance().getSecondPlayer().getStones());
+
+            gameActivity.displayToast("Kámen posunut z "+fromField+" na "+toField+".");
+
+            if(Game.getInstance().currentPlayerOnLastField()) {
+                gameActivity.showLeaveButton();
+            } else {
+                gameActivity.hideLeaveButton();
+            }
+            return true;
+        } else {
+            logger.w("Turn from "+fromField+" to "+toField+" not possible.");
+        }
+
+        return false;
+    }
+
     public String getTmpPlayerName() {
         return tmpPlayerName;
     }

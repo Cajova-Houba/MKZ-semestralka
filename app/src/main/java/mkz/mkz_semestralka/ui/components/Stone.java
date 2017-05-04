@@ -75,7 +75,7 @@ public class Stone {
         selectedPaint = new Paint();
         selectedPaint.setColor(DEF_SELECTED_COLOR);
         selectedPaint.setStyle(Paint.Style.STROKE);
-        selectedPaint.setStrokeWidth(2);
+        selectedPaint.setStrokeWidth(3);
     }
 
     public int getField() {

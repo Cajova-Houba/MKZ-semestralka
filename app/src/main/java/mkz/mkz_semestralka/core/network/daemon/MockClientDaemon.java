@@ -102,6 +102,7 @@ public class MockClientDaemon extends ThreadClientDaemon {
         // receive message
         setResponseToLastAction(new StartTurnReceivedMessage(firstPlayerPos, secondPlayerPos));
 
+        // callback
         getCallback().run();
 
         setDaemonState(ClientDaemonState.IDLE);

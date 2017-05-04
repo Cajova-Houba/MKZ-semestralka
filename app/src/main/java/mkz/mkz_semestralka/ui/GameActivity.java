@@ -93,7 +93,11 @@ public class GameActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
 //        unbindService(mConnection);
-        unregisterReceiver(broadcastReceiver);
+        try {
+            unregisterReceiver(broadcastReceiver);
+        } catch (IllegalArgumentException ex) {
+            // go fuck yourself android
+        }
     }
 
     private void displayP1Nick(String p1Nick) {
@@ -139,9 +143,8 @@ public class GameActivity extends AppCompatActivity {
 
     public void updateStones(int[] firsPlayerPositions, int[] seconPlayerPositions) {
         BoardView boardView = (BoardView) findViewById(R.id.boardView);
-        boardView.setFirstPlayerStonePositions(firsPlayerPositions);
-        boardView.setSecondPlayerStonePositions(seconPlayerPositions);
-        boardView.setCanDrawStones(true);
+        boardView.updateStones(firsPlayerPositions, seconPlayerPositions);
+        boardView.invalidate();
     }
 
     /**
@@ -181,5 +184,13 @@ public class GameActivity extends AppCompatActivity {
 
     public ClientDaemonService getClientDaemonService() {
         return clientDaemonService;
+    }
+
+    public void showLeaveButton() {
+        // todo: leave button
+    }
+
+    public void hideLeaveButton() {
+        // todo: leave button
     }
 }
