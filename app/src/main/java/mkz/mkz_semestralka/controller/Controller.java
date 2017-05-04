@@ -11,6 +11,7 @@ import mkz.mkz_semestralka.core.error.ErrorCode;
 import mkz.mkz_semestralka.core.error.ErrorMessages;
 import mkz.mkz_semestralka.core.game.Game;
 import mkz.mkz_semestralka.core.game.PlayerNum;
+import mkz.mkz_semestralka.core.message.received.EndGameReceivedMessage;
 import mkz.mkz_semestralka.core.message.received.StartTurnReceivedMessage;
 import mkz.mkz_semestralka.core.network.LoginData;
 import mkz.mkz_semestralka.core.network.daemon.DaemonActionNames;
@@ -166,9 +167,11 @@ public class Controller {
                 // new turn
                 StartTurnReceivedMessage msg = (StartTurnReceivedMessage) content;
                 newTurn(false, msg.getFirstPlayerStones(), msg.getSecondPlayerStones());
-            } else {
+            } else if(content instanceof EndGameReceivedMessage) {
                 // end game
                 // todo: end game
+            } else {
+                // todo: error
             }
 
         }
