@@ -43,9 +43,16 @@ public class GameActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             // todo: handle broadcasts
             logger.d("Broadcast received! "+intent.getAction());
-            if(intent.getStringExtra(DaemonActionNames.CLIENT_ACTION_NAME).equals(DaemonActionNames.START_GAME_RESPONSE)) {
+            String actionName = intent.getStringExtra(DaemonActionNames.CLIENT_ACTION_NAME);
+            if(actionName.equals(DaemonActionNames.START_GAME_RESPONSE)) {
                 logger.d("Start game response received from daemon!");
                 controller.handleStartNewGame(intent);
+            } else if (actionName.equals(DaemonActionNames.END_TURN_RESPONSE)) {
+                logger.d("End turn response received from daemon!");
+                controller.handleEndTurnResponse(intent, clientDaemonService);
+            } else if (actionName.equals(DaemonActionNames.NEW_TURN_MESSAGE)) {
+                logger.d("New turn message received from daemon!");
+                controller.handleNewTurn(intent);
             } else {
                 logger.w("Unsupported daemon action: "+intent.getStringExtra(DaemonActionNames.CLIENT_ACTION_NAME));
             }
@@ -114,6 +121,16 @@ public class GameActivity extends AppCompatActivity {
         toast.show();
     }
 
+    public void disableButtons() {
+        enableEndTurnButton(false);
+        enableThrowButton(false);
+    }
+
+    public void enableButtons() {
+        enableEndTurnButton(true);
+        enableThrowButton(true);
+    }
+
     public void startGame() {
         // todo: display stuff, timer...
         displayP1Nick(Game.getInstance().getFirstPlayer().getNick());
@@ -127,7 +144,42 @@ public class GameActivity extends AppCompatActivity {
         boardView.setCanDrawStones(true);
     }
 
+    /**
+     * Prepares components on the mane pane (not on the board!) for the
+     * new turn.
+     */
+    public void newTurn() {
+        enableButtons();
+        setThrowText("-");
+    }
+
+    public void resetTimerText() {
+        ((TextView)findViewById(R.id.turnTime)).setText("--:--");
+    }
+
+    /**
+     * Sets time text to remaining time.
+     * @param remainingTime Remaining time in seconds.
+     */
+    public void updateTimerText(int remainingTime) {
+        int time = remainingTime;
+        if(time < 0) {
+            time = 0;
+        }
+        int minutes = time / 60;
+        time = time - minutes*60;
+        ((TextView)findViewById(R.id.turnTime)).setText(String.format("%d:%d", minutes, time));
+    }
+
     public void onThrowClick(View view) {
         controller.throwSticks();
+    }
+
+    public void onEndTurnClick(View view) {
+        controller.endTurn(clientDaemonService);
+    }
+
+    public ClientDaemonService getClientDaemonService() {
+        return clientDaemonService;
     }
 }

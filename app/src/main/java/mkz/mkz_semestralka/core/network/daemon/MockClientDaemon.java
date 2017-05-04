@@ -1,19 +1,21 @@
 package mkz.mkz_semestralka.core.network.daemon;
 
-
+import mkz.mkz_semestralka.core.Constrains;
 import mkz.mkz_semestralka.core.message.received.OkReceivedMessage;
 import mkz.mkz_semestralka.core.message.received.StartGameReceivedMessage;
+import mkz.mkz_semestralka.core.message.received.StartTurnReceivedMessage;
 
 /**
- * A daemon thread which will fetch communication with the server.
- * The main thread will work only with UI, everything else should be done by daemon thread.
+ * Daemon which will return mock data. Used for testing.
  *
- * Created on 23.03.2017.
  * @author Zdenek Vales
  */
 
-public class ClientDaemon extends ThreadClientDaemon implements Daemon {
+public class MockClientDaemon extends ThreadClientDaemon {
 
+    // used to hold last sent turn word and return it on next turn
+    private int[] firstPlayerPos;
+    private int[] secondPlayerPos;
 
     /**
      * The core of this mighty Daemon, the state machine which will fetch all logic.
@@ -39,29 +41,70 @@ public class ClientDaemon extends ThreadClientDaemon implements Daemon {
                     waitForNewGameState();
                     break;
                 case END_TURN:
+                    endTurnState();
+                    break;
+                case WAIT_FOR_END_TURN_CONFIRM:
+                    waitForEndTurnConfirmState();
                     break;
                 case WAIT_FOR_NEW_TURN:
+                    waitForNewTurnState();
                     break;
             }
         }
     }
 
 
+    private void waitForEndTurnConfirmState() {
+        logger.d("Waiting for end turn confirm.");
+
+        // receive message
+        setResponseToLastAction(new OkReceivedMessage());
+
+        // call callback
+        callback.run();
+
+        setDaemonState(ClientDaemonState.IDLE);
+    }
+
     /**
      * Daemon will send end turn message to the server.
      */
-    // todo: end turn
     private void endTurnState() {
+        logger.d("End turn.");
 
-        state = ClientDaemonState.WAIT_FOR_NEW_TURN;
+        int[] tmp = (int[])getData();
+        if( firstPlayerPos == null) {
+            firstPlayerPos = new int[Constrains.MAX_NUMBER_OF_STONES];
+        }
+        if(secondPlayerPos == null) {
+            secondPlayerPos = new int[Constrains.MAX_NUMBER_OF_STONES];
+        }
+
+        for (int i = 0; i < Constrains.MAX_NUMBER_OF_STONES; i++) {
+            firstPlayerPos[i] = tmp[i];
+        }
+
+        for (int i = Constrains.MAX_NUMBER_OF_STONES; i < 2*Constrains.MAX_NUMBER_OF_STONES; i++) {
+            secondPlayerPos[i-Constrains.MAX_NUMBER_OF_STONES] = tmp[i];
+        }
+
+        // send end turn message
+
+        setDaemonState(ClientDaemonState.WAIT_FOR_END_TURN_CONFIRM);
     }
 
     /**
      * Daemon is waiting for a new turn message from server.
      */
-    // todo: wait for new turn
     private void waitForNewTurnState() {
-        state = ClientDaemonState.IDLE;
+        logger.d("Waiting for new turn.");
+
+        // receive message
+        setResponseToLastAction(new StartTurnReceivedMessage(firstPlayerPos, secondPlayerPos));
+
+        getCallback().run();
+
+        setDaemonState(ClientDaemonState.IDLE);
     }
 
     /**
@@ -72,33 +115,33 @@ public class ClientDaemon extends ThreadClientDaemon implements Daemon {
         logger.d("Waiting for new game.");
 
         // receive messages
-        responseToLastAction = new StartGameReceivedMessage("valesz", "p-2");
-        callback.run();
+        setResponseToLastAction(new StartGameReceivedMessage("valesz", "p-2"));
 
-        state = ClientDaemonState.IDLE;
+        // call callback
+        getCallback().run();
+
+        setDaemonState(ClientDaemonState.IDLE);
     }
 
     /**
      * Waits for the response and then calls the callback using main handler.
      */
-    // todo: wait for login response
     private void loginResponseWaitState() {
-        // wait for response
+        logger.d("Waiting for login response.");
 
         // call the callback
-        callback.run();
+        getCallback().run();
 
         // switch to idle state
-        state = ClientDaemonState.IDLE;
+        setDaemonState(ClientDaemonState.IDLE);
     }
 
     /**
      * Daemon will send the login data and then waits for the response.
      */
-    // todo: handle login state
     private void loginState() {
         // send login
-        logger.d("Logging to "+data.toString());
+        logger.d("Logging to "+getData().toString());
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
@@ -107,7 +150,7 @@ public class ClientDaemon extends ThreadClientDaemon implements Daemon {
         logger.d("Logged.");
 
         // set the received message
-        responseToLastAction = new OkReceivedMessage();
+        setResponseToLastAction(new OkReceivedMessage());
 //        Random r = new Random();
 //        int i = r.nextInt(8)+43;
 //        if(i > 46) {
@@ -117,8 +160,6 @@ public class ClientDaemon extends ThreadClientDaemon implements Daemon {
 //        }
 
         // switch the state
-        state = ClientDaemonState.LOGIN_RESPONSE_WAIT;
+        setDaemonState(ClientDaemonState.LOGIN_RESPONSE_WAIT);
     }
-
-
 }

@@ -1,13 +1,19 @@
 package mkz.mkz_semestralka.controller;
 
 import android.content.Intent;
+import android.os.CountDownTimer;
+
+import java.io.Serializable;
+import java.util.Arrays;
 
 import mkz.mkz_semestralka.core.Logger;
 import mkz.mkz_semestralka.core.error.ErrorCode;
 import mkz.mkz_semestralka.core.error.ErrorMessages;
 import mkz.mkz_semestralka.core.game.Game;
+import mkz.mkz_semestralka.core.message.received.StartTurnReceivedMessage;
 import mkz.mkz_semestralka.core.network.LoginData;
 import mkz.mkz_semestralka.core.network.daemon.DaemonActionNames;
+import mkz.mkz_semestralka.core.network.daemon.DaemonService;
 import mkz.mkz_semestralka.ui.EndGameActivity;
 import mkz.mkz_semestralka.ui.GameActivity;
 import mkz.mkz_semestralka.ui.LoginActivity;
@@ -23,6 +29,11 @@ import mkz.mkz_semestralka.ui.LoginActivity;
 public class Controller {
 
     private final static Logger logger = Logger.getLogger(Controller.class);
+
+    /**
+     * Max time for turn = 2 minutes.
+     */
+    public static final int MAX_TURN_TIME = 2*60;
 
     public static Controller getInstance() {
         return instance;
@@ -40,6 +51,15 @@ public class Controller {
      */
     private String tmpPlayerName;
 
+    /**
+     * Turn timer. If it expires, turn is automatically ended.
+     */
+    private CountDownTimer turnTimer;
+
+    /**
+     * Turn timer passed.
+     */
+    private boolean timerPassed;
 
     private Controller() {
     }
@@ -98,10 +118,117 @@ public class Controller {
                     Game.getInstance().getFirstPlayer().getStones(),
                     Game.getInstance().getSecondPlayer().getStones());
 
-            // todo: whose turn is now?
+            if(!Game.getInstance().isMyTurn()) {
+                gameActivity.disableButtons();
+            } else {
+                newTurn(true,Game.getInstance().getFirstPlayer().getStones(),
+                        Game.getInstance().getSecondPlayer().getStones());
+            }
         } else {
-            // handle error
+            // todo: handle error
         }
+    }
+
+    /**
+     * Handles response to end turn message. Either OK or error is expected.
+     *
+     * @param intent Message from daemon.
+     */
+    public void handleEndTurnResponse(Intent intent, DaemonService daemonService) {
+        logger.d("Handling new game response.");
+
+        ErrorCode errorCode = (ErrorCode) intent.getSerializableExtra(DaemonActionNames.ERR_CODE);
+        if(errorCode == ErrorCode.NO_ERROR) {
+            logger.d("Turn is ok.");
+
+            // wait for new turn
+            daemonService.waitForNewTurn();
+        } else {
+            // todo: handle error
+
+        }
+    }
+
+    /**
+     * Handles new turn message.
+     *
+     * @param intent
+     */
+    public void handleNewTurn(Intent intent) {
+        logger.d("Handling new turn message.");
+        ErrorCode errorCode = (ErrorCode) intent.getSerializableExtra(DaemonActionNames.ERR_CODE);
+        if (errorCode == ErrorCode.NO_ERROR) {
+            // check if it's new turn or end game
+            Serializable content = intent.getSerializableExtra(DaemonActionNames.CONTENT);
+            if(content instanceof StartTurnReceivedMessage) {
+                // new turn
+                StartTurnReceivedMessage msg = (StartTurnReceivedMessage) content;
+                newTurn(false, msg.getFirstPlayerStones(), msg.getSecondPlayerStones());
+            } else {
+                // end game
+                // todo: end game
+            }
+
+        }
+    }
+
+    /**
+     * Handle new turn.
+     * @param firstTurn
+     */
+    public void newTurn(boolean firstTurn, int[] firstPlayerStones, int[] secondPlayerStones) {
+        if(!firstTurn) {
+            Game.getInstance().newTurn(firstPlayerStones, secondPlayerStones);
+        }
+        gameActivity.newTurn();
+        gameActivity.updateStones(Game.getInstance().getFirstPlayer().getStones(),
+                Game.getInstance().getSecondPlayer().getStones());
+        startTimer();
+    }
+
+    /**
+     * Ends the turn and waits for START_TURN message
+     */
+    public void endTurn(DaemonService daemonService) {
+        if(Game.getInstance().canThrowAgain() && !timerPassed) {
+            logger.e("Cannot end turn if player can throw again!");
+            gameActivity.displayToast("Hráč musí házet znovu!");
+            return;
+        }
+
+        stopTimer();
+        gameActivity.resetTimerText();
+        Game.getInstance().endTurn();
+        gameActivity.disableButtons();
+        daemonService.endTurn(Game.getInstance().getFirstPlayer().getStones(),
+                Game.getInstance().getSecondPlayer().getStones());
+        // todo: wait for turn confirm
+        logger.d("Ending turn with player 1 stones: "+ Arrays.toString(Game.getInstance().getFirstPlayer().getStones())+
+                ", player 2 stones: "+Arrays.toString(Game.getInstance().getSecondPlayer().getStones())+".");
+    }
+
+    public void stopTimer() {
+        if(turnTimer == null) {
+            return;
+        }
+        turnTimer.cancel();
+    }
+
+    public void startTimer() {
+        timerPassed = false;
+        turnTimer = new CountDownTimer(MAX_TURN_TIME*1000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                gameActivity.updateTimerText((int) (millisUntilFinished / 1000));
+            }
+
+            public void onFinish() {
+                logger.d("Time for turn expired.");
+                timerPassed = true;
+                endTurn(gameActivity.getClientDaemonService());
+            }
+        };
+        turnTimer.start();
     }
 
     /**

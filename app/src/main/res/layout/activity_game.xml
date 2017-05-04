@@ -32,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/game_player2_name" />
 
-            <TextClock
+            <TextView
                 android:id="@+id/turnTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -59,9 +59,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
+                android:layout_weight="0.39"
+                android:onClick="onEndTurnClick"
                 android:text="@string/game_end_turn_caption"
-                android:visibility="visible"
-                android:layout_weight="0.39" />
+                android:visibility="visible" />
 
         </LinearLayout>
 

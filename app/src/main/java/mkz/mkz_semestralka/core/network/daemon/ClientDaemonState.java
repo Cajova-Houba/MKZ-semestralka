@@ -41,6 +41,11 @@ public enum ClientDaemonState {
     END_TURN,
 
     /**
+     * Wait for end turn confirm.
+     */
+    WAIT_FOR_END_TURN_CONFIRM,
+
+    /**
      * Daemon is waiting for new turn message from server.
      */
     WAIT_FOR_NEW_TURN,

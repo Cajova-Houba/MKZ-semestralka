@@ -1,5 +1,7 @@
 package mkz.mkz_semestralka.core.message.received;
 
+import java.io.Serializable;
+
 import mkz.mkz_semestralka.core.message.MessageType;
 
 /**
@@ -10,7 +12,7 @@ import mkz.mkz_semestralka.core.message.MessageType;
  * Created on 23.03.2017.
  * @author Zdenek Vales
  */
-public abstract class   AbstractReceivedMessage<T> {
+public abstract class   AbstractReceivedMessage<T> implements Serializable {
 
     /**
      * Returns a message content.

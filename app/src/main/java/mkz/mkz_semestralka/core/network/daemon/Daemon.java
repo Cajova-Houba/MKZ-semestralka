@@ -56,6 +56,12 @@ public interface Daemon {
     /**
      * Sends the end turn message and the daemon will wait for message to start next turn.
      */
-    void endTurn();
+    void endTurn(int[] firstPlayerStones, int[] secondPlayerStones, Runnable callback);
+
+    /**
+     * Daemon will wait for new turn message and when it's received, callback is called.
+     * @param callback
+     */
+    void waitForNewTurn(Runnable callback);
 
 }

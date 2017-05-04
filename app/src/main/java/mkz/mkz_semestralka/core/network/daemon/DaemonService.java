@@ -30,8 +30,24 @@ public interface DaemonService {
 
     /**
      * Sends the end turn message and the daemon will wait for message to start next turn.
+     *
+     * After response to end turn message is received, message with following values will be broadcast:
+     * CLIENT_ACTION_NAME: END_TURN_RESPONSE
+     * CONTENT: OK / ERR
+     * ERR_CODE: NO_ERROR / error code
+     *
      */
-    void endTurn();
+    void endTurn(int[] firstPlayerStones, int[] secondPlayerStones);
+
+    /**
+     * Daemon will keep waiting for new turn message.
+     *
+     * When it's received, message with following values wil be broadcast.
+     * CLIENT_ACTION_NAME: NEW_TURN_MESSAGE
+     * CONTENT: StartTurnReceivedMessage, EndGameReceivedMessage, ERR
+     * ERR_CODE: NO_ERROR / error code
+     */
+    void waitForNewTurn();
 
     /**
      * Sends an exit message to the server. No callback is probably needed for this.

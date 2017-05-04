@@ -51,5 +51,15 @@ public class DaemonActionNames {
      */
     public static final String START_GAME_RESPONSE = "START_GAME_RESPONSE";
 
+    /**
+     * Daemon is broadcasting response to end turn message.
+     */
+    public static final String END_TURN_RESPONSE = "END_TURN_RESPONSE";
+
+    /**
+     * Daemon is broadcasting new turn message.
+     */
+    public static final String NEW_TURN_MESSAGE = "NEW_TURN_MESSAGE";
+
 
 }

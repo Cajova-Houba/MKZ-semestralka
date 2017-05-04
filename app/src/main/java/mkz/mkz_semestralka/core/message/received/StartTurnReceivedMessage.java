@@ -36,7 +36,7 @@ public class StartTurnReceivedMessage extends AbstractReceivedMessage<int[]> {
         int[] both = new int[firstPlayerStones.length + secondPlayerStones.length];
         for (int i = 0; i < firstPlayerStones.length; i++) {
             both[i] = firstPlayerStones[i];
-            both[i+5] = secondPlayerStones[i];
+            both[i+firstPlayerStones.length] = secondPlayerStones[i];
         }
 
         return both;
