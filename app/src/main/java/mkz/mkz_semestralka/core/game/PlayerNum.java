@@ -8,6 +8,12 @@ package mkz.mkz_semestralka.core.game;
 
 public enum PlayerNum {
 
-    PLAYER_1,
-    PLAYER_2
+    PLAYER_1(1),
+    PLAYER_2(2);
+
+    public final int num;
+
+    PlayerNum(int num) {
+        this.num = num;
+    }
 }

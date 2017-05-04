@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +19,7 @@ import mkz.mkz_semestralka.core.game.Game;
 import mkz.mkz_semestralka.core.network.daemon.ClientDaemonService;
 import mkz.mkz_semestralka.core.network.daemon.DaemonActionNames;
 import mkz.mkz_semestralka.ui.components.BoardView;
+import mkz.mkz_semestralka.ui.components.Stone;
 
 /**
  * Created on 23.03.2017.
@@ -69,8 +71,7 @@ public class GameActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         logger.d("Binding client daemon service.");
-        Intent intent = new Intent(this, ClientDaemonService.class);
-//        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        ((BoardView)findViewById(R.id.boardView)).setParent(this);
         broadcastManager = LocalBroadcastManager.getInstance(this);
         broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(DaemonActionNames.DAEMON_FILTER));
         controller = Controller.getInstance();
@@ -186,11 +187,36 @@ public class GameActivity extends AppCompatActivity {
         return clientDaemonService;
     }
 
+    /**
+     * Returns the stone selected on a BoardView.
+     * @return
+     */
+    public Stone getSelected() {
+        BoardView boardView = (BoardView) findViewById(R.id.boardView);
+        return boardView.getSelected();
+    }
+
+    /**
+     * Deselect stone selected on board view.
+     */
+    public void deselect() {
+        BoardView boardView = (BoardView) findViewById(R.id.boardView);
+        boardView.deselect();
+    }
+
     public void showLeaveButton() {
-        // todo: leave button
+        Button leaveButton = (Button) findViewById(R.id.leaveBtn);
+        leaveButton.setEnabled(true);
+        leaveButton.setVisibility(View.VISIBLE);
     }
 
     public void hideLeaveButton() {
-        // todo: leave button
+        Button leaveButton = (Button) findViewById(R.id.leaveBtn);
+        leaveButton.setEnabled(false);
+        leaveButton.setVisibility(View.INVISIBLE);
+    }
+
+    public void leaveButtonClick(View view) {
+        controller.leaveBoard();
     }
 }

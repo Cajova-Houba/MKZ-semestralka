@@ -313,15 +313,15 @@ public class BoardView extends View {
         int fieldNumber = gamePosToFieldNumber(gPos);
         Stone selectedTmp = selectStoneOnField(fieldNumber);
 
-        logger.i(String.format("Clicked on %d,%d - field %d.\n",gPos[0], gPos[1], fieldNumber));
+        logger.i(String.format("Clicked on %d,%d - field %d.\n", gPos[0], gPos[1], fieldNumber));
 
         if (this.selected == null && selectedTmp != null) {
             logger.i(String.format("Selected: %s.", selectedTmp));
             select(selectedTmp);
-        } else if(this.selected != null && selectedTmp != null) {
+        } else if (this.selected != null && selectedTmp != null) {
 
             // if user click's on same stone, deselect it
-            if(this.selected.getField() == selectedTmp.getField()) {
+            if (this.selected.getField() == selectedTmp.getField()) {
                 logger.i(String.format("Deselecting %s.", this.selected));
                 deselect();
             } else {
@@ -335,5 +335,9 @@ public class BoardView extends View {
 
             controller.move(this.selected.getField(), fieldNumber);
         }
+    }
+
+    public Stone getSelected() {
+        return selected;
     }
 }

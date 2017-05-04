@@ -61,7 +61,7 @@ public class MockClientDaemon extends ThreadClientDaemon {
         setResponseToLastAction(new OkReceivedMessage());
 
         // call callback
-        callback.run();
+        getCallback().run();
 
         setDaemonState(ClientDaemonState.IDLE);
     }

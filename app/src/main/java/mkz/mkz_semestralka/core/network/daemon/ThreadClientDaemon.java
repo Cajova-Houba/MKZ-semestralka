@@ -46,6 +46,7 @@ public abstract class ThreadClientDaemon extends Thread implements Daemon{
     }
 
     public synchronized void setDaemonState(ClientDaemonState state) {
+        logger.d("Setting state to: "+state);
         this.state = state;
     }
 

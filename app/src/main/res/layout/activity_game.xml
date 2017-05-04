@@ -66,12 +66,34 @@
 
         </LinearLayout>
 
-        <view
-            android:id="@+id/boardView"
-            class="mkz.mkz_semestralka.ui.components.BoardView"
-            id="@+id/boardView"
-            layout_weight="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="259dp"
+            android:orientation="vertical"
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="8dp"
+            android:gravity="right">
+            <view
+                android:id="@+id/boardView"
+                class="mkz.mkz_semestralka.ui.components.BoardView"
+                layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="220dp" />
+
+            <Button
+                android:id="@+id/leaveBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="39dp"
+                android:enabled="false"
+                android:onClick="leaveButtonClick"
+                android:text="@string/game_leave_caption"
+                android:textAlignment="center"
+                android:visibility="invisible" />
+        </LinearLayout>
+
+
+
     </LinearLayout>
+
+
 </android.support.constraint.ConstraintLayout>

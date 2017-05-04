@@ -10,6 +10,7 @@ import mkz.mkz_semestralka.core.Logger;
 import mkz.mkz_semestralka.core.error.ErrorCode;
 import mkz.mkz_semestralka.core.error.ErrorMessages;
 import mkz.mkz_semestralka.core.game.Game;
+import mkz.mkz_semestralka.core.game.PlayerNum;
 import mkz.mkz_semestralka.core.message.received.StartTurnReceivedMessage;
 import mkz.mkz_semestralka.core.network.LoginData;
 import mkz.mkz_semestralka.core.network.daemon.DaemonActionNames;
@@ -17,6 +18,7 @@ import mkz.mkz_semestralka.core.network.daemon.DaemonService;
 import mkz.mkz_semestralka.ui.EndGameActivity;
 import mkz.mkz_semestralka.ui.GameActivity;
 import mkz.mkz_semestralka.ui.LoginActivity;
+import mkz.mkz_semestralka.ui.components.Stone;
 
 /**
  * Controller for app.
@@ -135,7 +137,7 @@ public class Controller {
      * @param intent Message from daemon.
      */
     public void handleEndTurnResponse(Intent intent, DaemonService daemonService) {
-        logger.d("Handling new game response.");
+        logger.d("Handling end turn response.");
 
         ErrorCode errorCode = (ErrorCode) intent.getSerializableExtra(DaemonActionNames.ERR_CODE);
         if(errorCode == ErrorCode.NO_ERROR) {
@@ -154,7 +156,7 @@ public class Controller {
      *
      * @param intent
      */
-    public void handleNewTurn(Intent intent) {
+    public void  handleNewTurn(Intent intent) {
         logger.d("Handling new turn message.");
         ErrorCode errorCode = (ErrorCode) intent.getSerializableExtra(DaemonActionNames.ERR_CODE);
         if (errorCode == ErrorCode.NO_ERROR) {
@@ -309,6 +311,49 @@ public class Controller {
         }
 
         return false;
+    }
+
+    /**
+     * If the currently selected pawn is on the field 30, pawn can leave the board.
+     */
+    public void leaveBoard() {
+        PlayerNum currentPlayer = Game.getInstance().getCurrentPlayerNum();
+
+        if(!Game.getInstance().isMyTurn()) {
+            logger.w("Not my turn.");
+            gameActivity.displayToast("Nejsem na tahu!\n");
+            return;
+        }
+
+        if(Game.getInstance().isAlreadyMoved()) {
+            logger.w("Already moved.");
+            gameActivity.displayToast("V tomto tahu už jsem hrál.\n");
+            return;
+        }
+
+        Stone stone = gameActivity.getSelected();
+        if(stone == null) {
+            logger.w("No stone selected.");
+            return;
+        }
+
+        if(stone.getPlayer() != currentPlayer.num) {
+            logger.w("Selected pawn doesn't belong to the current player!");
+            return;
+        }
+
+        if(stone.getField() != Game.LAST_FIELD) {
+            logger.w("Selected pawn isn't on the last field!");
+            return;
+        }
+
+        Game.getInstance().leaveBoard();
+        gameActivity.displayToast("Kámen opustil hrací plochu.\n");
+        logger.d("Pawn "+stone+" has leaved the game board");
+        gameActivity.deselect();
+        gameActivity.updateStones(Game.getInstance().getFirstPlayer().getStones(),
+                Game.getInstance().getSecondPlayer().getStones());
+        gameActivity.hideLeaveButton();
     }
 
     public String getTmpPlayerName() {
