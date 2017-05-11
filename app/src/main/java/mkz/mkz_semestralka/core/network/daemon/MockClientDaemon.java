@@ -142,6 +142,12 @@ public class MockClientDaemon extends ThreadClientDaemon {
             setResponseToLastAction(new StartTurnReceivedMessage(firstPlayerPos, secondPlayerPos));
         }
 
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         // callback
         getCallback().run();
 

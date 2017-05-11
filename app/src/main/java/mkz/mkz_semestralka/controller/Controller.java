@@ -64,6 +64,11 @@ public class Controller {
      */
     private boolean timerPassed;
 
+    /**
+     * Flag indicating the client is logged to the server.
+     */
+    private boolean logged;
+
     private Controller() {
     }
 
@@ -95,6 +100,7 @@ public class Controller {
             Game.getInstance().waitingForOpponent(loginData.getNick());
             tmpPlayerName = loginData.getNick();
             loginActivity.displayMainView();
+            logged = true;
         } else {
             // login not ok - display error
             ErrorCode errCode = (ErrorCode) intent.getSerializableExtra(DaemonActionNames.ERR_CODE);
@@ -230,7 +236,18 @@ public class Controller {
         // stop daemon service
         DaemonService ds = gameActivity.getClientDaemonService();
         ds.disconnect();
+        logged = false;
         gameActivity.displayEndGame(winner);
+    }
+
+    /**
+     * Should be called from login activity.
+     * If the client is already logged, switched to game activity.
+     */
+    public void checkIsLogged() {
+        if(logged) {
+            loginActivity.displayMainView();
+        }
     }
 
     public void stopTimer() {

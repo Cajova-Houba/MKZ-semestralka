@@ -28,9 +28,12 @@ public class GameActivity extends AppCompatActivity {
 
     private final static Logger logger = Logger.getLogger(GameActivity.class);
 
-    public static final String DEF_P1_NICK = "-";
+    /**
+     * For saving last thrown value.
+     */
+    private static final String LAST_THROWN_VAL = "LAST_THROWN_VAL";
+
     public static final String DEF_P2_NICK = "-";
-    public static final String DEF_THROW = "-";
 
     private Controller controller;
 
@@ -78,13 +81,18 @@ public class GameActivity extends AppCompatActivity {
 
         switch (Game.getInstance().getState()) {
             case WAITING_FOR_OPPONENT:
+                logger.d("Waiting for opponent.");
                 clientDaemonService.waitForStartGame();
                 displayP1Nick(controller.getTmpPlayerName());
                 displayP2Nick(DEF_P2_NICK);
                 break;
             case RUNNING:
+                logger.d("The game is already running.");
                 displayP1Nick(Game.getInstance().getFirstPlayer().getNick());
                 displayP2Nick(Game.getInstance().getSecondPlayer().getNick());
+                updateStones(Game.getInstance().getFirstPlayer().getStones(), Game.getInstance().getSecondPlayer().getStones());
+                setLastThrownVal(Game.getInstance().getThrownValue());
+                resumeButtons();
                 break;
         }
     }
@@ -96,6 +104,27 @@ public class GameActivity extends AppCompatActivity {
             broadcastManager.unregisterReceiver(broadcastReceiver);
         } catch (IllegalArgumentException ex) {
             // go fuck yourself android
+        }
+    }
+
+    /**
+     * Sets correct enabled value to buttons.
+     */
+    private void resumeButtons() {
+        if(!Game.getInstance().isMyTurn()) {
+            disableButtons();
+        } else if(Game.getInstance().alreadyThrown()) {
+            enableThrowButton(false);
+        }
+    }
+
+    private void setLastThrownVal(int lastThrownVal) {
+        if(Game.getInstance().isMyTurn() && lastThrownVal > 0) {
+            logger.d("My turn!");
+            setThrowText(String.valueOf(lastThrownVal));
+        } else {
+            logger.d("Not my turn!");
+            setThrowText(getString(R.string.game_throw_value));
         }
     }
 
@@ -154,6 +183,7 @@ public class GameActivity extends AppCompatActivity {
     public void newTurn() {
         enableButtons();
         setThrowText("-");
+        displayToast("Nový tah.");
     }
 
     public void resetTimerText() {

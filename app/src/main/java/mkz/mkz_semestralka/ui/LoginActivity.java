@@ -58,6 +58,7 @@ public class LoginActivity extends AppCompatActivity {
         controller.setLoginActivity(this);
 
         // todo: check if is already connected
+        controller.checkIsLogged();
     }
 
     @Override
