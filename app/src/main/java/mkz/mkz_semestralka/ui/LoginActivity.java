@@ -83,9 +83,10 @@ public class LoginActivity extends AppCompatActivity {
         String addr = ((EditText)findViewById(R.id.addressEdit)).getText().toString();
         String portStr = ((EditText)findViewById(R.id.portEdit)).getText().toString();
         try {
+            // todo: validation
             int port = Integer.parseInt(portStr);
-            loginData = new LoginData(nick, addr, port);
-            clientDaemonService.login(new LoginData("nick","localhost",65000));
+            loginData = new LoginData(nick, "147.228.134.129", port);
+            clientDaemonService.login(loginData);
         } catch (NumberFormatException e) {
             logger.e("Exception while converting the port number: "+e.getMessage());
             displayErrorMessage("Špatné číslo portu.");

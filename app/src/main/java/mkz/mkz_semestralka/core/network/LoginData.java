@@ -31,4 +31,13 @@ public class LoginData implements Serializable{
     public int getPort() {
         return port;
     }
+
+    @Override
+    public String toString() {
+        return "LoginData{" +
+                "nick='" + nick + '\'' +
+                ", address='" + address + '\'' +
+                ", port=" + port +
+                '}';
+    }
 }

@@ -28,7 +28,8 @@ import mkz.mkz_semestralka.ui.components.Stone;
  *
  * @author  Zdenek Vales
  */
-
+// todo: exit from game
+// todo: handle buggy stuff when switching activities - especially when no receiver is registered for broadcasts
 public class Controller {
 
     private final static Logger logger = Logger.getLogger(Controller.class);
@@ -129,6 +130,8 @@ public class Controller {
 
             if(!Game.getInstance().isMyTurn()) {
                 gameActivity.disableButtons();
+                // todo: wait for my turn
+                gameActivity.getClientDaemonService().waitForNewTurn();
             } else {
                 newTurn(true,Game.getInstance().getFirstPlayer().getStones(),
                         Game.getInstance().getSecondPlayer().getStones());

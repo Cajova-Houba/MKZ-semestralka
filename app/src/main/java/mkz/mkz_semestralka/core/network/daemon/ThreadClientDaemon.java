@@ -1,6 +1,7 @@
 package mkz.mkz_semestralka.core.network.daemon;
 
 import mkz.mkz_semestralka.core.Logger;
+import mkz.mkz_semestralka.core.error.Error;
 import mkz.mkz_semestralka.core.message.received.AbstractReceivedMessage;
 import mkz.mkz_semestralka.core.network.LoginData;
 
@@ -15,6 +16,8 @@ public abstract class ThreadClientDaemon extends Thread implements Daemon{
     protected final static Logger logger = Logger.getLogger(ClientDaemon.class);
 
     protected ClientDaemonState state;
+
+    protected Error lastError;
 
     /**
      * Response to the last manually message sent to server. Responses to ALIVE message are
@@ -68,6 +71,20 @@ public abstract class ThreadClientDaemon extends Thread implements Daemon{
 
     public synchronized void setData(Object data) {
         this.data = data;
+    }
+
+    @Override
+    public synchronized Error getLastError() {
+        return lastError;
+    }
+
+    public synchronized  void setLastError(Error lastError) {
+        this.lastError = lastError;
+    }
+
+    @Override
+    public synchronized void nullLastError() {
+        this.lastError = null;
     }
 
     @Override

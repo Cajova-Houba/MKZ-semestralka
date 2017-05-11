@@ -31,7 +31,7 @@ import mkz.mkz_semestralka.core.message.received.StartTurnReceivedMessage;
  * Created on 23.03.2017.
  * @author Zdenek Vales
  */
-public abstract class AbstractReceiver{
+public class AbstractReceiver{
 
     protected static final Logger logger = Logger.getLogger(AbstractReceiver.class);
 

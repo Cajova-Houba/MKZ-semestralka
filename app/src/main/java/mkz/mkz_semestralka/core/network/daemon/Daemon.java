@@ -1,5 +1,6 @@
 package mkz.mkz_semestralka.core.network.daemon;
 
+import mkz.mkz_semestralka.core.error.Error;
 import mkz.mkz_semestralka.core.message.received.AbstractReceivedMessage;
 import mkz.mkz_semestralka.core.network.LoginData;
 
@@ -17,6 +18,19 @@ import mkz.mkz_semestralka.core.network.LoginData;
  */
 
 public interface Daemon {
+
+    /**
+     * Last error which occurred. Use this for handling communication errors.
+     * When error occurs, daemon will switch to idle state so it won't be rewritten.
+     *
+     * @return
+     */
+    Error getLastError();
+
+    /**
+     * User should use this after the last error is no longer needed.
+     */
+    void nullLastError();
 
     /**
      * Returns the response to the last action performed.

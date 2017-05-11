@@ -11,6 +11,7 @@ import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
 
 import mkz.mkz_semestralka.core.Logger;
+import mkz.mkz_semestralka.core.error.Error;
 import mkz.mkz_semestralka.core.error.ErrorCode;
 import mkz.mkz_semestralka.core.message.received.AbstractReceivedMessage;
 import mkz.mkz_semestralka.core.message.received.EndGameReceivedMessage;
@@ -38,7 +39,8 @@ public class ClientDaemonService extends Service implements DaemonService {
     private final IBinder mBinder = new LocalBinder();
 
 //    private ThreadClientDaemon clientDaemon = new ClientDaemon();
-    private ThreadClientDaemon clientDaemon = new MockClientDaemon();
+//    private ThreadClientDaemon clientDaemon = new MockClientDaemon();
+    private ThreadClientDaemon clientDaemon = new TCPClientDaemon();
 
     private static ClientDaemonService instance = new ClientDaemonService();
 
@@ -94,19 +96,25 @@ public class ClientDaemonService extends Service implements DaemonService {
             @Override
             public void run() {
                 AbstractReceivedMessage msg = clientDaemon.getResponseToLastAction();
+                OkReceivedMessage okMsg = ReceivedMessageTypeResolver.isOk(msg);
                 ErrorReceivedMessage err = ReceivedMessageTypeResolver.isError(msg);
+                Error internalError = clientDaemon.getLastError();
 
                 Intent i = createIntent(DaemonActionNames.LOGIN_RESPONSE);
 
-                // add response from server to broadcast message
-                if (msg != null) {
-                    if (ReceivedMessageTypeResolver.isOk(msg) != null) {
-                        i.putExtra(DaemonActionNames.CONTENT, DaemonActionNames.CONTENT_OK);
-                        i.putExtra(DaemonActionNames.ERR_CODE, ErrorCode.NO_ERROR);
-                    } else if (err != null) {
-                        i.putExtra(DaemonActionNames.CONTENT, DaemonActionNames.CONTENT_ERR);
-                        i.putExtra(DaemonActionNames.ERR_CODE, err.getContent().code);
-                    }
+                // handle internal error first
+                if(internalError != null) {
+                    i.putExtra(DaemonActionNames.CONTENT, DaemonActionNames.CONTENT_ERR);
+                    i.putExtra(DaemonActionNames.ERR_CODE, internalError.code);
+                }
+
+                // now handle messages
+                else if (okMsg != null) {
+                    i.putExtra(DaemonActionNames.CONTENT, DaemonActionNames.CONTENT_OK);
+                    i.putExtra(DaemonActionNames.ERR_CODE, ErrorCode.NO_ERROR);
+                } else {
+                    i.putExtra(DaemonActionNames.CONTENT, DaemonActionNames.CONTENT_ERR);
+                    i.putExtra(DaemonActionNames.ERR_CODE, err.getContent().code);
                 }
 
                 broadcastIntent(i);
@@ -120,17 +128,24 @@ public class ClientDaemonService extends Service implements DaemonService {
         clientDaemon.waitForStartGame(new Runnable() {
             @Override
             public void run() {
+                Intent i = createIntent(DaemonActionNames.START_GAME_RESPONSE);
+
+                Error internalError = clientDaemon.getLastError();
                 AbstractReceivedMessage msg = clientDaemon.getResponseToLastAction();
                 StartGameReceivedMessage start = ReceivedMessageTypeResolver.isStartGame(msg);
                 ErrorReceivedMessage err = ReceivedMessageTypeResolver.isError(msg);
 
-                Intent i = createIntent(DaemonActionNames.START_GAME_RESPONSE);
-                if (start != null) {
+                // handle internal error first
+                if(internalError != null) {
+                    i.putExtra(DaemonActionNames.CONTENT, DaemonActionNames.CONTENT_ERR);
+                    i.putExtra(DaemonActionNames.ERR_CODE, internalError.code);
+                }
+
+                // now handle messages
+                else if (start != null) {
                     // start game
                     // add nicks
                     i.putExtra(DaemonActionNames.CONTENT, start.getFirstNickname() + ";" + start.getSecondNickname());
-
-                    // add no err
                     i.putExtra(DaemonActionNames.ERR_CODE, ErrorCode.NO_ERROR);
                 } else {
                     // error occured
