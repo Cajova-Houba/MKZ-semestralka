@@ -51,6 +51,11 @@ public enum ClientDaemonState {
     WAIT_FOR_NEW_TURN,
 
     /**
+     * Disconnect the daemon from server and delete all data.
+     */
+    DISCONNECT,
+
+    /**
      * This will STOP the Daemon thread, use wisely!
      */
     STOP

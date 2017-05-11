@@ -38,7 +38,7 @@ public class ClientDaemonService extends Service implements DaemonService {
     private final IBinder mBinder = new LocalBinder();
 
 //    private ThreadClientDaemon clientDaemon = new ClientDaemon();
-private ThreadClientDaemon clientDaemon = new MockClientDaemon();
+    private ThreadClientDaemon clientDaemon = new MockClientDaemon();
 
     private static ClientDaemonService instance = new ClientDaemonService();
 
@@ -205,6 +205,11 @@ private ThreadClientDaemon clientDaemon = new MockClientDaemon();
 
     @Override
     public void exit() {
+
+    }
+
+    @Override
+    public void disconnect() {
 
     }
 

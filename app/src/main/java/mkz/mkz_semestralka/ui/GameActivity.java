@@ -92,9 +92,8 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-//        unbindService(mConnection);
         try {
-            unregisterReceiver(broadcastReceiver);
+            broadcastManager.unregisterReceiver(broadcastReceiver);
         } catch (IllegalArgumentException ex) {
             // go fuck yourself android
         }

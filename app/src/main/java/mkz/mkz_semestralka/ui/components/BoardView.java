@@ -318,6 +318,7 @@ public class BoardView extends View {
         if (this.selected == null && selectedTmp != null) {
             logger.i(String.format("Selected: %s.", selectedTmp));
             select(selectedTmp);
+            controller.select(selectedTmp.getField());
         } else if (this.selected != null && selectedTmp != null) {
 
             // if user click's on same stone, deselect it
@@ -328,6 +329,7 @@ public class BoardView extends View {
                 logger.i(String.format("Selected %s instead of %s.", selectedTmp, this.selected));
                 deselect();
                 select(selectedTmp);
+                controller.select(selectedTmp.getField());
             }
         } else if (this.selected != null && selectedTmp == null) {
 

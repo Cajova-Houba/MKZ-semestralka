@@ -51,9 +51,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        logger.d("Binding client daemon service.");
-        clientDaemonService.setContext(this);
-//        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        logger.d("Resuming LoginActivity.");
         broadcastManager = LocalBroadcastManager.getInstance(this);
         broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(DaemonActionNames.DAEMON_FILTER));
         controller = Controller.getInstance();
@@ -65,15 +63,14 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-//        unbindService(mConnection);
         broadcastManager.unregisterReceiver(broadcastReceiver);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        logger.d("Creating LoginActivity.");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        logger.d("Creating LoginActivity.");
     }
 
     /**

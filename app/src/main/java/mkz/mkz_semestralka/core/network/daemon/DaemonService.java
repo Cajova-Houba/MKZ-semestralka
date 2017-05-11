@@ -58,4 +58,9 @@ public interface DaemonService {
      * Immediately after the current state code is done stops the daemon.
      */
     void stopDaemon();
+
+    /**
+     * Disconnect the daemon and switch to to the IDLE state.
+     */
+    void disconnect();
 }

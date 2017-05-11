@@ -51,10 +51,22 @@ public class MockClientDaemon extends ThreadClientDaemon {
                 case WAIT_FOR_NEW_TURN:
                     waitForNewTurnState();
                     break;
+                case DISCONNECT:
+                    disconnectState();
+                    break;
             }
         }
     }
 
+
+    private void disconnectState() {
+        setResponseToLastAction(null);
+        setCallback(null);
+        firstPlayerPos = null;
+        secondPlayerPos = null;
+
+        setDaemonState(ClientDaemonState.IDLE);
+    }
 
     private void waitForEndTurnConfirmState() {
         logger.d("Waiting for end turn confirm.");

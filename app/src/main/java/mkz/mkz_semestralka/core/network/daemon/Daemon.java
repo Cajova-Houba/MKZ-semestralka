@@ -64,4 +64,9 @@ public interface Daemon {
      */
     void waitForNewTurn(Runnable callback);
 
+    /**
+     * Disconnect the daemon and switch to to the IDLE state.
+     */
+    void disconnect();
+
 }

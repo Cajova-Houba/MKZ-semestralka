@@ -102,6 +102,11 @@ public abstract class ThreadClientDaemon extends Thread implements Daemon{
     }
 
     @Override
+    public void disconnect() {
+        setDaemonState(ClientDaemonState.DISCONNECT);
+    }
+
+    @Override
     public void endTurn(int[] firstPlayerStones, int[] secondPlayerStones, Runnable callback) {
         // convert both arrays to one
         int tmp[] = new int[firstPlayerStones.length+secondPlayerStones.length];

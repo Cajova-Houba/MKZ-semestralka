@@ -226,7 +226,10 @@ public class Controller {
         logger.d("End of the game, winner is: "+winner);
         stopTimer();
         Game.getInstance().resetGame();
-//        tcpClient.disconnect();
+
+        // stop daemon service
+        DaemonService ds = gameActivity.getClientDaemonService();
+        ds.disconnect();
         gameActivity.displayEndGame(winner);
     }
 
@@ -235,9 +238,14 @@ public class Controller {
             return;
         }
         turnTimer.cancel();
+        turnTimer = null;
     }
 
     public void startTimer() {
+        if(turnTimer != null) {
+            logger.w("Timer is already running!");
+            return;
+        }
         timerPassed = false;
         turnTimer = new CountDownTimer(MAX_TURN_TIME*1000, 1000) {
 
@@ -285,6 +293,25 @@ public class Controller {
     }
 
     /**
+     * Check the stone on field which was selected. If there's a stone on the field, the field is the last
+     * and the palyer can move, leave button will be displayed.
+     * display leave button.
+     * @param fieldNumber
+     */
+    public void select(int fieldNumber) {
+        if(!Game.getInstance().isMyTurn()) {
+            logger.w("Not my turn.");
+            return;
+        }
+
+        if(!Game.getInstance().isAlreadyMoved() && Game.getInstance().getCurrentPlayer().isStoneOnField(fieldNumber) && fieldNumber == Game.LAST_FIELD) {
+            gameActivity.showLeaveButton();
+        } else {
+            gameActivity.hideLeaveButton();
+        }
+    }
+
+    /**
      * Tries to move the stone of the current player on the fromField to toFiled.
      * If the stone is moved, true is returned and board view is updated.
      *
@@ -321,7 +348,7 @@ public class Controller {
 
             gameActivity.displayToast("Kámen posunut z "+fromField+" na "+toField+".");
 
-            if(Game.getInstance().currentPlayerOnLastField()) {
+            if(Game.getInstance().currentPlayerOnLastField() && !Game.getInstance().isAlreadyMoved()) {
                 gameActivity.showLeaveButton();
             } else {
                 gameActivity.hideLeaveButton();
