@@ -150,12 +150,17 @@ private ThreadClientDaemon clientDaemon = new MockClientDaemon();
             public void run() {
                 AbstractReceivedMessage msg = clientDaemon.getResponseToLastAction();
                 OkReceivedMessage okMsg = ReceivedMessageTypeResolver.isOk(msg);
+                EndGameReceivedMessage endGame = ReceivedMessageTypeResolver.isEndGame(msg);
                 ErrorReceivedMessage err = ReceivedMessageTypeResolver.isError(msg);
 
                 Intent i = createIntent(DaemonActionNames.END_TURN_RESPONSE);
                 if(okMsg != null) {
                     // turn ok
                     i.putExtra(DaemonActionNames.CONTENT, DaemonActionNames.CONTENT_OK);
+                    i.putExtra(DaemonActionNames.ERR_CODE, ErrorCode.NO_ERROR);
+                } else if (endGame != null) {
+                    // end game
+                    i.putExtra(DaemonActionNames.CONTENT, endGame);
                     i.putExtra(DaemonActionNames.ERR_CODE, ErrorCode.NO_ERROR);
                 } else {
                     // not ok, put err

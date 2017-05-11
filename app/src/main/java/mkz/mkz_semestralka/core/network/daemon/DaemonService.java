@@ -33,7 +33,7 @@ public interface DaemonService {
      *
      * After response to end turn message is received, message with following values will be broadcast:
      * CLIENT_ACTION_NAME: END_TURN_RESPONSE
-     * CONTENT: OK / ERR
+     * CONTENT: OK / ERR / EndGameReceivedMessage
      * ERR_CODE: NO_ERROR / error code
      *
      */

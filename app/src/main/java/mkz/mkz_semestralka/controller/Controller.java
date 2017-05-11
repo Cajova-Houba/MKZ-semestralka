@@ -142,10 +142,16 @@ public class Controller {
 
         ErrorCode errorCode = (ErrorCode) intent.getSerializableExtra(DaemonActionNames.ERR_CODE);
         if(errorCode == ErrorCode.NO_ERROR) {
-            logger.d("Turn is ok.");
-
-            // wait for new turn
-            daemonService.waitForNewTurn();
+            // check if the game hasn't ended
+            Serializable content = intent.getSerializableExtra(DaemonActionNames.CONTENT);
+            if(content instanceof EndGameReceivedMessage) {
+                logger.d("End of the game!");
+                endGame(((EndGameReceivedMessage) content).getContent());
+            } else {
+                logger.d("Turn ok.");
+                // wait for new turn
+                daemonService.waitForNewTurn();
+            }
         } else {
             // todo: handle error
 
@@ -169,7 +175,7 @@ public class Controller {
                 newTurn(false, msg.getFirstPlayerStones(), msg.getSecondPlayerStones());
             } else if(content instanceof EndGameReceivedMessage) {
                 // end game
-                // todo: end game
+                endGame(((EndGameReceivedMessage) content).getContent());
             } else {
                 // todo: error
             }
@@ -210,6 +216,18 @@ public class Controller {
         // todo: wait for turn confirm
         logger.d("Ending turn with player 1 stones: "+ Arrays.toString(Game.getInstance().getFirstPlayer().getStones())+
                 ", player 2 stones: "+Arrays.toString(Game.getInstance().getSecondPlayer().getStones())+".");
+    }
+
+    /**
+     * Ends the game, disconnects the tcpClient.
+     */
+    public void endGame(String winner) {
+        // todo: proper handling
+        logger.d("End of the game, winner is: "+winner);
+        stopTimer();
+        Game.getInstance().resetGame();
+//        tcpClient.disconnect();
+        gameActivity.displayEndGame(winner);
     }
 
     public void stopTimer() {

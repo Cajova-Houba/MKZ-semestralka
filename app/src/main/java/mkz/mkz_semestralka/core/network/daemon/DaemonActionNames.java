@@ -60,6 +60,4 @@ public class DaemonActionNames {
      * Daemon is broadcasting new turn message.
      */
     public static final String NEW_TURN_MESSAGE = "NEW_TURN_MESSAGE";
-
-
 }

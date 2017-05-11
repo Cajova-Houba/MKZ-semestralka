@@ -1,6 +1,8 @@
 package mkz.mkz_semestralka.core.network.daemon;
 
 import mkz.mkz_semestralka.core.Constrains;
+import mkz.mkz_semestralka.core.game.Game;
+import mkz.mkz_semestralka.core.message.received.EndGameReceivedMessage;
 import mkz.mkz_semestralka.core.message.received.OkReceivedMessage;
 import mkz.mkz_semestralka.core.message.received.StartGameReceivedMessage;
 import mkz.mkz_semestralka.core.message.received.StartTurnReceivedMessage;
@@ -58,7 +60,20 @@ public class MockClientDaemon extends ThreadClientDaemon {
         logger.d("Waiting for end turn confirm.");
 
         // receive message
-        setResponseToLastAction(new OkReceivedMessage());
+        // if at least one of the first players stones is out of board
+        // assume the game has ended
+        boolean end = false;
+        for(int stone : firstPlayerPos) {
+            if(stone == Game.OUT_OF_BOARD) {
+                end = true;
+                break;
+            }
+        }
+        if(end) {
+            setResponseToLastAction(new EndGameReceivedMessage(Game.getInstance().getFirstPlayer().getNick()));
+        } else {
+            setResponseToLastAction(new OkReceivedMessage());
+        }
 
         // call callback
         getCallback().run();
@@ -100,7 +115,20 @@ public class MockClientDaemon extends ThreadClientDaemon {
         logger.d("Waiting for new turn.");
 
         // receive message
-        setResponseToLastAction(new StartTurnReceivedMessage(firstPlayerPos, secondPlayerPos));
+        // if at least one of the first players stones is out of board
+        // assume the game has ended
+        boolean end = false;
+        for(int stone : firstPlayerPos) {
+            if(stone == Game.OUT_OF_BOARD) {
+                end = true;
+                break;
+            }
+        }
+        if(end) {
+            setResponseToLastAction(new EndGameReceivedMessage(Game.getInstance().getFirstPlayer().getNick()));
+        } else {
+            setResponseToLastAction(new StartTurnReceivedMessage(firstPlayerPos, secondPlayerPos));
+        }
 
         // callback
         getCallback().run();

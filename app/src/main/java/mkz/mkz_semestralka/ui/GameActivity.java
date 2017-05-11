@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import mkz.mkz_semestralka.R;
 import mkz.mkz_semestralka.controller.Controller;
@@ -122,8 +121,9 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public void displayToast(String message) {
-        Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
-        toast.show();
+//        Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
+//        toast.show();
+        ((TextView)findViewById(R.id.messageTextView)).setText(message);
     }
 
     public void disableButtons() {
@@ -218,5 +218,16 @@ public class GameActivity extends AppCompatActivity {
 
     public void leaveButtonClick(View view) {
         controller.leaveBoard();
+    }
+
+    /**
+     * Switches to end game activity and displays winner's name.
+     * @param winner
+     */
+    public void displayEndGame(String winner) {
+        Intent i = new Intent(this, EndGameActivity.class);
+        // todo: move WINNER_NAME to constant
+        i.putExtra(EndGameActivity.WINNERS_NAME_FIELD, winner);
+        startActivity(i);
     }
 }
