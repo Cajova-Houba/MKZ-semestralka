@@ -62,8 +62,15 @@ public class ClientDaemonService extends Service implements DaemonService {
     }
 
     private Context context;
+	
+	/**
+	 * After every broadcast, the intent will be saved to this queue and will be removed (by it's unique ID) when it's handled.
+	 * Used for storing pending messages from daemon.
+	 */
+	private List<Intent> intentQueue;
 
     public ClientDaemonService() {
+		intentQueue = new LinkedList<>();
         clientDaemon.start();
     }
 
@@ -240,20 +247,51 @@ public class ClientDaemonService extends Service implements DaemonService {
     /**
      * Creates a new intent with DAEMON_FILTER action and puts clientActionName as a CLIENT_ACTION_NAME string extra.
      * @param clientActionName
-     * @return
+     * @return Newly created intent.
      */
     private Intent createIntent(String clientActionName) {
         Intent i = new Intent(DaemonActionNames.DAEMON_FILTER);
+		i.putExtra(DaemonActionNames.ID, UUID.randomUUID());
         i.putExtra(DaemonActionNames.CLIENT_ACTION_NAME, clientActionName);
         return i;
     }
 
     /**
-     * Broadcast intent usign local manager.
+     * Broadcast intent usign local manager and saves the intent to queue.
      * @param intent
      */
     private void broadcastIntent(Intent intent) {
+		intentQueue.add(intent);
         LocalBroadcastManager manager = LocalBroadcastManager.getInstance(context);
         manager.sendBroadcast(intent);
     }
+	
+	/**
+	 * Removes the intent from queue by its id.
+	 */
+	public void removeIntent(String intentId) {
+		Iterator<Intent> itIt = intentQueue.iterator();
+		while(itIt.hasNext()) {
+			Intent it = itIt.next();
+			if(it.getStringExtra(DaemonActionNames.ID).equals(intentId)) {
+				itIt.remove();
+				break;
+			}
+		}
+	}
+	
+	/**
+	 * Broadcasts the first intent in queue.
+	 *
+	 * @return Returns true if the queue wasn't empty and intent was broadcast. If the queue was empty, returns false.
+	 */
+	public boolean broadcastIntent() {
+		if(intentQueue.isEmpty()) {
+			return false;
+		}
+		
+		Intent i = intentQueue.remove(0);
+		broadcastIntent(i);
+		return true;
+	}
 }

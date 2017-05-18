@@ -9,6 +9,11 @@ package mkz.mkz_semestralka.core.network.daemon;
  */
 
 public class DaemonActionNames {
+	
+	/**
+	 * Name of the field which will contain unique ID of broadcast intent.
+	 */
+	public static final String ID = "ID";
 
     /**
      * Use this value for IntentFilter when registering broadcast receiver for client daemon.
