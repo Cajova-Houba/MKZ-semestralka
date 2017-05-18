@@ -70,6 +70,8 @@ public class Controller {
      */
     private boolean logged;
 
+	private ClientDaemonService daemonService = ClientDaemonService.getInstance();
+	
     private Controller() {
     }
 
@@ -93,7 +95,9 @@ public class Controller {
      * @param loginData Login data sent to server.
      */
     public void handleLogin(Intent intent, LoginData loginData) {
-        logger.d("Starting new game.");
+		String intentId = intent.getStringExtra(DaemonActionNames.ID);
+		daemonService.removeIntent(intentId);
+        logger.d("Handling login response intent ("+intentId+").");
 
         String content = intent.getStringExtra(DaemonActionNames.CONTENT);
         if(content.equalsIgnoreCase(DaemonActionNames.CONTENT_OK)) {
@@ -116,8 +120,10 @@ public class Controller {
      * @param intent Message from daemon.
      */
     public void handleStartNewGame(Intent intent) {
-        logger.d("Handling new game response.");
-
+		String intentId = intent.getStringExtra(DaemonActionNames.ID);
+		daemonService.removeIntent(intentId);
+        logger.d("Handling new game response intent ("+intentId+").");
+		
         ErrorCode errorCode = (ErrorCode) intent.getSerializableExtra(DaemonActionNames.ERR_CODE);
         if(errorCode == ErrorCode.NO_ERROR) {
             // start game
@@ -147,7 +153,9 @@ public class Controller {
      * @param intent Message from daemon.
      */
     public void handleEndTurnResponse(Intent intent, DaemonService daemonService) {
-        logger.d("Handling end turn response.");
+        String intentId = intent.getStringExtra(DaemonActionNames.ID);
+		daemonService.removeIntent(intentId);
+		logger.d("Handling end turn response intent ("+intentId+").");
 
         ErrorCode errorCode = (ErrorCode) intent.getSerializableExtra(DaemonActionNames.ERR_CODE);
         if(errorCode == ErrorCode.NO_ERROR) {
@@ -173,7 +181,10 @@ public class Controller {
      * @param intent
      */
     public void  handleNewTurn(Intent intent) {
-        logger.d("Handling new turn message.");
+		String intentId = intent.getStringExtra(DaemonActionNames.ID);
+		daemonService.removeIntent(intentId);
+        logger.d("Handling new turn message intent ("+intentId+").");
+		
         ErrorCode errorCode = (ErrorCode) intent.getSerializableExtra(DaemonActionNames.ERR_CODE);
         if (errorCode == ErrorCode.NO_ERROR) {
             // check if it's new turn or end game
