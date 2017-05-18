@@ -10,6 +10,11 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.UUID;
+
 import mkz.mkz_semestralka.core.Logger;
 import mkz.mkz_semestralka.core.error.Error;
 import mkz.mkz_semestralka.core.error.ErrorCode;
@@ -170,13 +175,17 @@ public class ClientDaemonService extends Service implements DaemonService {
         clientDaemon.endTurn(firstPlayerStones, secondPlayerStones, new Runnable() {
             @Override
             public void run() {
+                Error lastError = clientDaemon.getLastError();
                 AbstractReceivedMessage msg = clientDaemon.getResponseToLastAction();
                 OkReceivedMessage okMsg = ReceivedMessageTypeResolver.isOk(msg);
                 EndGameReceivedMessage endGame = ReceivedMessageTypeResolver.isEndGame(msg);
                 ErrorReceivedMessage err = ReceivedMessageTypeResolver.isError(msg);
 
                 Intent i = createIntent(DaemonActionNames.END_TURN_RESPONSE);
-                if(okMsg != null) {
+                if(lastError != null) {
+                    i.putExtra(DaemonActionNames.CONTENT, DaemonActionNames.CONTENT_ERR);
+                    i.putExtra(DaemonActionNames.ERR_CODE, lastError.code);
+                } else if(okMsg != null) {
                     // turn ok
                     i.putExtra(DaemonActionNames.CONTENT, DaemonActionNames.CONTENT_OK);
                     i.putExtra(DaemonActionNames.ERR_CODE, ErrorCode.NO_ERROR);
@@ -201,13 +210,17 @@ public class ClientDaemonService extends Service implements DaemonService {
             @Override
             public void run() {
                 logger.d("New turn callback");
+                Error lastError = clientDaemon.getLastError();
                 AbstractReceivedMessage msg = clientDaemon.getResponseToLastAction();
                 StartTurnReceivedMessage startTurn = ReceivedMessageTypeResolver.isStartTurn(msg);
                 EndGameReceivedMessage endGame = ReceivedMessageTypeResolver.isEndGame(msg);
                 ErrorReceivedMessage err = ReceivedMessageTypeResolver.isError(msg);
 
                 Intent i = createIntent(DaemonActionNames.NEW_TURN_MESSAGE);
-                if(startTurn != null) {
+                if(lastError != null) {
+                    i.putExtra(DaemonActionNames.CONTENT, DaemonActionNames.CONTENT_ERR);
+                    i.putExtra(DaemonActionNames.ERR_CODE, lastError.code);
+                } else if(startTurn != null) {
                     // new turn
                     i.putExtra(DaemonActionNames.CONTENT, startTurn);
                     i.putExtra(DaemonActionNames.ERR_CODE, ErrorCode.NO_ERROR);
@@ -232,7 +245,7 @@ public class ClientDaemonService extends Service implements DaemonService {
 
     @Override
     public void disconnect() {
-
+        clientDaemon.disconnect();
     }
 
     @Override
@@ -251,13 +264,13 @@ public class ClientDaemonService extends Service implements DaemonService {
      */
     private Intent createIntent(String clientActionName) {
         Intent i = new Intent(DaemonActionNames.DAEMON_FILTER);
-		i.putExtra(DaemonActionNames.ID, UUID.randomUUID());
+		i.putExtra(DaemonActionNames.ID, UUID.randomUUID().toString());
         i.putExtra(DaemonActionNames.CLIENT_ACTION_NAME, clientActionName);
         return i;
     }
 
     /**
-     * Broadcast intent usign local manager and saves the intent to queue.
+     * Broadcast intent using local manager and saves the intent to queue.
      * @param intent
      */
     private void broadcastIntent(Intent intent) {

@@ -62,7 +62,7 @@ public class LoginActivity extends AppCompatActivity {
 		
 		
 		// this loop will broadcast all intents left in the queue
-		while(clientDaemonService.broadcastIntent());
+        clientDaemonService.broadcastIntent();
     }
 
     @Override
@@ -89,7 +89,7 @@ public class LoginActivity extends AppCompatActivity {
         try {
             // todo: validation
             int port = Integer.parseInt(portStr);
-            loginData = new LoginData(nick, "147.228.134.129", port);
+            loginData = new LoginData(nick, "147.228.142.48", port);
             clientDaemonService.login(loginData);
         } catch (NumberFormatException e) {
             logger.e("Exception while converting the port number: "+e.getMessage());
@@ -97,15 +97,23 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        findViewById(R.id.errorText).setVisibility(View.INVISIBLE);
+    }
+
     public void enableConnectBtn(boolean enable) {
         findViewById(R.id.connectBtn).setEnabled(enable);
     }
 
     public void displayErrorMessage(String errorMessage) {
+        findViewById(R.id.errorText).setVisibility(View.VISIBLE);
         ((TextView)findViewById(R.id.errorText)).setText(errorMessage);
     }
 
     public void displayMainView() {
+        findViewById(R.id.errorText).setVisibility(View.INVISIBLE);
         Intent i = new Intent(this, GameActivity.class);
         startActivity(i);
     }

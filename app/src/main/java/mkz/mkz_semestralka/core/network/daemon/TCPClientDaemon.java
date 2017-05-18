@@ -120,10 +120,10 @@ public class TCPClientDaemon extends ThreadClientDaemon {
             AbstractReceivedMessage msg = tcpClient.receiveMessage();
             setResponseToLastAction(msg);
         } catch (IOException e) {
-            logger.e("Error while sending login message: "+e.getMessage());
+            logger.e("Error while receiving response to end turn message: "+e.getMessage());
             setLastError(Error.NO_CONNECTION());
         } catch (ReceivingException e) {
-            logger.e("Error while sending login message: "+e.getMessage());
+            logger.e("Error while receiving response to end turn message: "+e.getMessage());
             setLastError(e.error);
         }
 
@@ -193,10 +193,10 @@ public class TCPClientDaemon extends ThreadClientDaemon {
             AbstractReceivedMessage msg = tcpClient.receiveMessage();
             setResponseToLastAction(msg);
         } catch (IOException e) {
-            logger.e("Error while sending login message: "+e.getMessage());
+            logger.e("IO Error while receiving login response: "+e.getMessage());
             setLastError(Error.NO_CONNECTION());
         } catch (ReceivingException e) {
-            logger.e("Error while sending login message: "+e.getMessage());
+            logger.e("Error ("+e.getClass()+") while receiving login response: "+e.getMessage());
             setLastError(e.error);
         }
 
@@ -219,7 +219,7 @@ public class TCPClientDaemon extends ThreadClientDaemon {
         try {
             tcpClient.sendLoginMessage(loginData);
         } catch (IOException e) {
-            logger.e("Error while sending login message: "+e.getMessage());
+            logger.e("Exception ("+e.getClass().getSimpleName()+") while sending login message: "+e.getMessage());
             setLastError(Error.NO_CONNECTION());
 
             // call callback

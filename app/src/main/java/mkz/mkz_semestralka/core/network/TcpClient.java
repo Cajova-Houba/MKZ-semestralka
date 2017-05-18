@@ -3,6 +3,7 @@ package mkz.mkz_semestralka.core.network;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
@@ -58,6 +59,9 @@ public class TcpClient {
 
         Socket s = new Socket();
         s.connect(new InetSocketAddress(loginData.getAddress(), loginData.getPort()));
+        if(!s.isConnected()) {
+            throw new ConnectException("Socket not connected!");
+        }
         lastSuccessfulConnection = loginData;
 
         return s;
@@ -69,7 +73,7 @@ public class TcpClient {
      */
     public void sendLoginMessage(LoginData loginData) throws IOException {
         logger.d("Sending login message: "+loginData);
-        if(socket == null) {
+        if(socket == null || !socket.isConnected()) {
             socket = connect(loginData);
         }
 
@@ -77,6 +81,7 @@ public class TcpClient {
             DataOutputStream dos = null;
             dos = new DataOutputStream(socket.getOutputStream());
             dos.write(MessageBuilder.createNickMessage(loginData.getNick()).toBytes());
+            logger.d("Message "+MessageBuilder.createNickMessage(loginData.getNick())+ " sent");
         } else {
             logger.w("Not connected!");
         }

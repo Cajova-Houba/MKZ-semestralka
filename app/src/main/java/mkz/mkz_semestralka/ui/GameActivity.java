@@ -53,7 +53,7 @@ public class GameActivity extends AppCompatActivity {
                 controller.handleStartNewGame(intent);
             } else if (actionName.equals(DaemonActionNames.END_TURN_RESPONSE)) {
                 logger.d("End turn response received from daemon!");
-                controller.handleEndTurnResponse(intent, clientDaemonService);
+                controller.handleEndTurnResponse(intent);
             } else if (actionName.equals(DaemonActionNames.NEW_TURN_MESSAGE)) {
                 logger.d("New turn message received from daemon!");
                 controller.handleNewTurn(intent);
@@ -97,7 +97,7 @@ public class GameActivity extends AppCompatActivity {
         }
 		
 		// this loop will broadcast all intents left in the queue
-		while(clientDaemonService.broadcastIntent());
+		clientDaemonService.broadcastIntent();
     }
 
     @Override

@@ -3,6 +3,7 @@ package mkz.mkz_semestralka.core.game;
 import java.util.Random;
 
 import mkz.mkz_semestralka.core.Constrains;
+import mkz.mkz_semestralka.core.Logger;
 
 /**
  * This class contains the game data and implements game logic.
@@ -11,6 +12,8 @@ import mkz.mkz_semestralka.core.Constrains;
  */
 
 public class Game {
+
+    public static final Logger logger = Logger.getLogger(Game.class);
 
     public static final int LAST_FIELD = 30;
     public static final int OUT_OF_BOARD = 31;
@@ -149,8 +152,10 @@ public class Game {
      */
     public void startGame(String firstPlayer, String secondPlayer) {
         if (firstPlayer.equals(me)) {
+            logger.d(firstPlayer+" is same as  "+me);
             myPlayer = PlayerNum.PLAYER_1;
         } else {
+            logger.d(firstPlayer+" is not same as  "+me);
             myPlayer = PlayerNum.PLAYER_2;
         }
 

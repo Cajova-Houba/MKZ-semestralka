@@ -14,6 +14,7 @@ import mkz.mkz_semestralka.core.game.PlayerNum;
 import mkz.mkz_semestralka.core.message.received.EndGameReceivedMessage;
 import mkz.mkz_semestralka.core.message.received.StartTurnReceivedMessage;
 import mkz.mkz_semestralka.core.network.LoginData;
+import mkz.mkz_semestralka.core.network.daemon.ClientDaemonService;
 import mkz.mkz_semestralka.core.network.daemon.DaemonActionNames;
 import mkz.mkz_semestralka.core.network.daemon.DaemonService;
 import mkz.mkz_semestralka.ui.EndGameActivity;
@@ -152,9 +153,9 @@ public class Controller {
      *
      * @param intent Message from daemon.
      */
-    public void handleEndTurnResponse(Intent intent, DaemonService daemonService) {
+    public void handleEndTurnResponse(Intent intent) {
         String intentId = intent.getStringExtra(DaemonActionNames.ID);
-		daemonService.removeIntent(intentId);
+        daemonService.removeIntent(intentId);
 		logger.d("Handling end turn response intent ("+intentId+").");
 
         ErrorCode errorCode = (ErrorCode) intent.getSerializableExtra(DaemonActionNames.ERR_CODE);
@@ -248,8 +249,7 @@ public class Controller {
         Game.getInstance().resetGame();
 
         // stop daemon service
-        DaemonService ds = gameActivity.getClientDaemonService();
-        ds.disconnect();
+        daemonService.disconnect();
         logged = false;
         gameActivity.displayEndGame(winner);
     }

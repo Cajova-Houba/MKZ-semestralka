@@ -28,20 +28,12 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/playAgainBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="162dp"
-                android:layout_weight="1"
-                android:elevation="0dp"
-                android:text="@string/endgame_playagain" />
-
-            <Button
                 android:id="@+id/anotherServerBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="154dp"
                 android:layout_weight="0.76"
                 android:onClick="onAnotherServerClick"
-                android:text="@string/endgame_another_server" />
+                android:text="@string/endgame_playagain" />
         </LinearLayout>
 
     </LinearLayout>

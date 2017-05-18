@@ -80,6 +80,7 @@
             android:textAlignment="center"
             android:textColor="@android:color/holo_red_dark"
             android:textSize="30sp"
+            android:visibility="invisible"
             tools:layout_editor_absoluteX="8dp"
             tools:layout_editor_absoluteY="8dp" />
 
