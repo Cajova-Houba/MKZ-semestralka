@@ -95,6 +95,9 @@ public class GameActivity extends AppCompatActivity {
                 resumeButtons();
                 break;
         }
+		
+		// this loop will broadcast all intents left in the queue
+		while(clientDaemonService.broadcastIntent());
     }
 
     @Override

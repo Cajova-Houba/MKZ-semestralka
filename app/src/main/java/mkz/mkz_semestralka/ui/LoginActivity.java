@@ -59,6 +59,10 @@ public class LoginActivity extends AppCompatActivity {
 
         // todo: check if is already connected
         controller.checkIsLogged();
+		
+		
+		// this loop will broadcast all intents left in the queue
+		while(clientDaemonService.broadcastIntent());
     }
 
     @Override
