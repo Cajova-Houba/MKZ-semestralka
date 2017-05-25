@@ -89,7 +89,7 @@ public class LoginActivity extends AppCompatActivity {
         try {
             // todo: validation
             int port = Integer.parseInt(portStr);
-            loginData = new LoginData(nick, "147.228.142.48", port);
+            loginData = new LoginData(nick, addr, port);
             clientDaemonService.login(loginData);
         } catch (NumberFormatException e) {
             logger.e("Exception while converting the port number: "+e.getMessage());
